@@ -1,0 +1,15 @@
+# Frontend Dockerfile for LOCAL DEVELOPMENT
+# Runs Vite dev server with hot-reload (HMR)
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies (cached layer)
+COPY package*.json ./
+RUN npm install
+
+# Source is mounted as a volume in docker-compose.yml
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

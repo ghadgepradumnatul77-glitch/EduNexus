@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-main: 20, 184, 166;
+    --primary-dark: 13, 148, 136;
+    --slate-main: 30, 41, 59;
+
+    --surface-main: #f8fafc;
+    --surface-card: #ffffff;
+    --surface-glass: rgba(255, 255, 255, 0.7);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #475569;
+    --border-subtle: rgba(226, 232, 240, 0.6);
+  }
+
+  .dark {
+    --surface-main: #0f172a;
+    --surface-card: #1e293b;
+    --surface-glass: rgba(15, 23, 42, 0.8);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-subtle: rgba(51, 65, 85, 0.4);
+  }
+
+  body {
+    @apply bg-surface-main text-text-primary antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+    background-size: 200px 200px;
+    opacity: 0.98;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-4 ring-primary-500/50 ring-offset-2 ring-offset-surface-main transition-shadow;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-surface-glass backdrop-blur-md border border-border-subtle shadow-glass;
+  }
+
+  .glass-dark {
+    @apply bg-slate-900/40 backdrop-blur-md border border-slate-700/30 shadow-2xl;
+  }
+
+  .btn-premium {
+    @apply relative overflow-hidden bg-text-primary text-surface-main font-semibold py-3 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-primary-500/10 hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-premium-accent {
+    @apply relative overflow-hidden bg-primary-600 text-white font-semibold py-3 px-8 rounded-2xl shadow-lg shadow-primary-500/10 transition-all duration-300 hover:shadow-primary-500/20 hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0;
+  }
+
+  .card-premium {
+    @apply bg-surface-card/80 backdrop-blur-xl rounded-[2rem] border border-border-subtle shadow-premium p-8 transition-all duration-500 hover:shadow-2xl hover:bg-surface-card;
+  }
+
+  .sidebar-item {
+    @apply flex items-center space-x-3 px-6 py-3.5 rounded-2xl transition-all duration-300 text-text-secondary font-medium hover:bg-surface-main hover:text-text-primary;
+  }
+
+  .sidebar-item-active {
+    @apply flex items-center space-x-3 px-6 py-3.5 rounded-2xl bg-text-primary text-surface-main font-bold shadow-xl shadow-primary-500/5 transition-all duration-300;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden bg-surface-main rounded-xl;
+  }
+
+  .skeleton::after {
+    @apply content-[''] absolute inset-0 -translate-x-full animate-shimmer;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        transparent);
+  }
+}
+
+/* Transitions */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Suppress browser-native password reveal and clear buttons */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}

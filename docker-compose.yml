@@ -1,0 +1,142 @@
+# ============================================================
+# EduNexus — Docker Local Development Environment
+# Usage:
+#   docker compose up --build          Start everything
+#   docker compose down                Stop everything
+#   docker compose down -v             Stop + delete volumes (fresh DB)
+# ============================================================
+
+version: '3.9'
+
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: edunexus_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: edunexus
+      POSTGRES_USER: edunexus_user
+      POSTGRES_PASSWORD: edunexus_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Init script (runs on first boot only)
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+      # SQL source files — /schema.sql and /migrations/ are separate paths
+      - ./backend/db/schema.sql:/schema.sql:ro
+      - ./backend/db/migrations:/migrations:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U edunexus_user -d edunexus" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - edunexus_net
+
+  # ── PGBouncer ────────────────────────────────────────────
+  pgbouncer:
+    image: bitnami/pgbouncer:latest
+    container_name: edunexus_pgbouncer
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DATABASE: edunexus
+      POSTGRESQL_USERNAME: edunexus_user
+      POSTGRESQL_PASSWORD: edunexus_pass
+      PGBOUNCER_DATABASE: edunexus
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MAX_CLIENT_CONN: 100
+      PGBOUNCER_DEFAULT_POOL_SIZE: 20
+      PGBOUNCER_PORT: 5433
+    ports:
+      - "5433:5433"
+    networks:
+      - edunexus_net
+
+  # ── Redis ────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: edunexus_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - edunexus_net
+
+  # ── Backend (Node.js) ────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: edunexus_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    env_file:
+      - ./docker/backend.env
+    volumes:
+      # Hot-reload: mount source, exclude node_modules
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:5000/health || exit 1" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - edunexus_net
+
+  # ── Frontend (Vite dev server) ───────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: edunexus_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    env_file:
+      - ./docker/frontend.env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "80:5173"
+    networks:
+      - edunexus_net
+
+# ── Volumes ──────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# ── Networks ─────────────────────────────────────────────
+networks:
+  edunexus_net:
+    driver: bridge

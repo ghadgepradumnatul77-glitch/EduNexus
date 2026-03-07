@@ -1,0 +1,29 @@
+{
+    # Global Options
+    on_demand_tls {
+        # Critical: Only issue certificates for domains we know
+        ask http://localhost:5000/api/saas/verify-domain
+    }
+}
+
+# Wildcard and Primary Domain
+*.edunexus.com, edunexus.com {
+    reverse_proxy localhost:5000
+    
+    # Optional: SSL configuration
+    tls {
+        dns cloudflare {env.CLOUDFLARE_AUTH_TOKEN}
+    }
+}
+
+# On-Demand Custom Domains
+:443 {
+    tls {
+        on_demand
+    }
+    
+    reverse_proxy localhost:5000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+    }
+}

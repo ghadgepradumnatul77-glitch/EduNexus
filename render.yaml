@@ -1,0 +1,43 @@
+services:
+  # PostgreSQL Database
+  - type: psql
+    name: edunexus-db
+    plan: free
+    region: ohio
+
+  # Node.js API Service
+  - type: web
+    name: edunexus-api
+    env: node
+    plan: free
+    region: ohio
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        fromDatabase:
+          name: edunexus-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: edunexus-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: edunexus-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: edunexus-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: edunexus-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: "https://your-vercel-app-url.vercel.app"

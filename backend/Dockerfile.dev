@@ -1,0 +1,20 @@
+# Backend Dockerfile for LOCAL DEVELOPMENT
+# Uses nodemon for hot-reload, mounts source via docker-compose volume
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install nodemon globally for hot-reload
+RUN npm install -g nodemon
+
+# Install dependencies (cached layer)
+COPY package*.json ./
+RUN npm install
+
+# Source is mounted as a volume in docker-compose.yml
+# so we don't COPY . . here — allows hot-reload
+
+EXPOSE 5000
+
+# Run migration then start server
+CMD ["sh", "-c", "node db/migrate.js && nodemon --legacy-watch server.js"]

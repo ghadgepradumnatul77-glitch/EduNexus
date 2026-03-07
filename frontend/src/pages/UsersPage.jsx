@@ -126,27 +126,27 @@ const UsersPage = () => {
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">First Name</label>
                                 <input required value={form.first_name} onChange={e => setForm(f => ({ ...f, first_name: e.target.value }))}
-                                    className="w-full bg-surface-main border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all" />
+                                    className="w-full bg-surface-main border border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all" />
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Last Name</label>
                                 <input required value={form.last_name} onChange={e => setForm(f => ({ ...f, last_name: e.target.value }))}
-                                    className="w-full bg-surface-main border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all" />
+                                    className="w-full bg-surface-main border border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all" />
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Email</label>
                                 <input required type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                                    className="w-full bg-surface-main border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all" />
+                                    className="w-full bg-surface-main border border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all" />
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Password</label>
                                 <input required type="password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                                    className="w-full bg-surface-main border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all" />
+                                    className="w-full bg-surface-main border border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all" />
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Role</label>
                                 <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
-                                    className="w-full bg-surface-main border border-border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all cursor-pointer">
+                                    className="w-full bg-surface-main border border-subtle rounded-xl px-4 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all cursor-pointer">
                                     {ROLES.map(r => <option key={r}>{r}</option>)}
                                 </select>
                             </div>
@@ -170,7 +170,7 @@ const UsersPage = () => {
                             placeholder="Search identities..."
                             value={search}
                             onChange={e => { setSearch(e.target.value); setPage(1); }}
-                            className="w-full bg-surface-card border border-border-subtle rounded-xl px-10 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-text-muted/50"
+                            className="w-full bg-surface-card border border-subtle rounded-xl px-10 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-text-muted/50"
                         />
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none group-focus-within:text-primary-500 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,7 +181,7 @@ const UsersPage = () => {
                     <select
                         value={roleFilter}
                         onChange={e => { setRoleFilter(e.target.value); setPage(1); }}
-                        className="bg-surface-card border border-border-subtle rounded-xl px-6 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all cursor-pointer font-bold"
+                        className="bg-surface-card border border-subtle rounded-xl px-6 py-3 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all cursor-pointer font-bold"
                     >
                         <option value="">Full Directory</option>
                         {ROLES.map(r => <option key={r}>{r}</option>)}
@@ -190,11 +190,11 @@ const UsersPage = () => {
                 </div>
 
                 {/* Table */}
-                <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-border-subtle">
+                <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-subtle">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="text-[10px] font-black text-text-muted uppercase tracking-widest border-b border-border-subtle bg-surface-main/30">
+                                <tr className="text-[10px] font-black text-text-muted uppercase tracking-widest border-b border-subtle bg-surface-main/30">
                                     <th className="px-6 py-4 text-left">Identity</th>
                                     <th className="px-6 py-4 text-left">Clearance</th>
                                     <th className="px-6 py-4 text-left">Status</th>
@@ -262,12 +262,12 @@ const UsersPage = () => {
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="px-6 py-4 bg-surface-main/30 border-t border-border-subtle flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                        <div className="px-6 py-4 bg-surface-main/30 border-t border-subtle flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
                             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                                className="px-4 py-2 rounded-xl border border-border-subtle disabled:opacity-30 hover:bg-surface-main transition-all">← Prev</button>
+                                className="px-4 py-2 rounded-xl border border-subtle disabled:opacity-30 hover:bg-surface-main transition-all">← Prev</button>
                             <span className="text-text-muted">Page {page} of {totalPages}</span>
                             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                                className="px-4 py-2 rounded-xl border border-border-subtle disabled:opacity-30 hover:bg-surface-main transition-all">Next →</button>
+                                className="px-4 py-2 rounded-xl border border-subtle disabled:opacity-30 hover:bg-surface-main transition-all">Next →</button>
                         </div>
                     )}
                 </div>

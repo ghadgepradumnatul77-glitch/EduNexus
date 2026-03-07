@@ -43,8 +43,7 @@
 
 @layer components {
   .glass {
-    @apply bg-surface-glass backdrop-blur-md border shadow-glass;
-    border-color: var(--border-subtle);
+    @apply bg-surface-glass backdrop-blur-md border border-subtle shadow-glass;
   }
 
   .glass-dark {
@@ -60,7 +59,7 @@
   }
 
   .card-premium {
-    @apply bg-surface-card/80 backdrop-blur-xl rounded-[2rem] border border-border-subtle shadow-premium p-8 transition-all duration-500 hover:shadow-2xl hover:bg-surface-card;
+    @apply bg-surface-card/80 backdrop-blur-xl rounded-[2rem] border border-subtle shadow-premium p-8 transition-all duration-500 hover:shadow-2xl hover:bg-surface-card;
   }
 
   .sidebar-item {

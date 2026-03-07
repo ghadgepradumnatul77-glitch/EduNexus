@@ -49,8 +49,8 @@ const MyMarks = () => {
             </div>
 
             {/* Table */}
-            <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-border-subtle">
-                <div className="px-6 py-4 bg-surface-main/30 border-b border-border-subtle">
+            <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-subtle">
+                <div className="px-6 py-4 bg-surface-main/30 border-b border-subtle">
                     <h3 className="text-sm font-black text-text-primary uppercase tracking-widest leading-none">Exam History</h3>
                 </div>
                 {loading ? (
@@ -59,7 +59,7 @@ const MyMarks = () => {
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="text-[10px] font-black text-text-muted uppercase tracking-widest border-b border-border-subtle bg-surface-main/20">
+                                <tr className="text-[10px] font-black text-text-muted uppercase tracking-widest border-b border-subtle bg-surface-main/20">
                                     <th className="px-6 py-4 text-left">Exam</th>
                                     <th className="px-6 py-4 text-left">Type</th>
                                     <th className="px-6 py-4 text-left">Score</th>
@@ -81,7 +81,7 @@ const MyMarks = () => {
                                             <td className="px-6 py-4 font-black text-text-secondary">{m.marks_obtained}/{m.max_marks}</td>
                                             <td className="px-6 py-4 w-40">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="flex-1 h-2 rounded-full bg-surface-main overflow-hidden border border-border-subtle">
+                                                    <div className="flex-1 h-2 rounded-full bg-surface-main overflow-hidden border border-subtle">
                                                         <div className={`h-full rounded-full transition-all duration-700 ${barColor}`} style={{ width: `${pct}%` }} />
                                                     </div>
                                                     <span className="text-[10px] font-black text-text-muted w-8">{pct}%</span>
@@ -159,14 +159,14 @@ const UploadMarks = () => {
     return (
         <div className="space-y-4">
             {/* Exam Info */}
-            <div className="bg-surface-card rounded-[2rem] shadow-premium p-8 border border-border-subtle grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="bg-surface-card rounded-[2rem] shadow-premium p-8 border border-subtle grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Exam Name *</label>
                     <input
                         value={examName}
                         onChange={e => setExamName(e.target.value)}
                         placeholder="e.g. Midterm Exam"
-                        className="w-full bg-surface-main border border-border-subtle rounded-xl px-4 py-2 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-text-muted/50"
+                        className="w-full bg-surface-main border border-subtle rounded-xl px-4 py-2 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-text-muted/50"
                     />
                 </div>
                 <div>
@@ -174,7 +174,7 @@ const UploadMarks = () => {
                     <select
                         value={examType}
                         onChange={e => setExamType(e.target.value)}
-                        className="w-full bg-surface-main border border-border-subtle rounded-xl px-4 py-2 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all cursor-pointer"
+                        className="w-full bg-surface-main border border-subtle rounded-xl px-4 py-2 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all cursor-pointer"
                     >
                         <option value="weekly">Weekly</option>
                         <option value="midterm">Midterm</option>
@@ -188,7 +188,7 @@ const UploadMarks = () => {
                         type="number"
                         value={maxMarks}
                         onChange={e => setMaxMarks(e.target.value)}
-                        className="w-full bg-surface-main border border-border-subtle rounded-xl px-4 py-2 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all"
+                        className="w-full bg-surface-main border border-subtle rounded-xl px-4 py-2 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all"
                     />
                 </div>
             </div>
@@ -200,8 +200,8 @@ const UploadMarks = () => {
             )}
 
             {/* Student Entries */}
-            <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-border-subtle">
-                <div className="px-6 py-4 bg-surface-main/30 border-b border-border-subtle flex justify-between items-center">
+            <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-subtle">
+                <div className="px-6 py-4 bg-surface-main/30 border-b border-subtle flex justify-between items-center">
                     <h3 className="text-sm font-black text-text-primary uppercase tracking-widest leading-none">Enter Marks per Student</h3>
                     <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">{students.length} students</span>
                 </div>
@@ -224,14 +224,14 @@ const UploadMarks = () => {
                                     placeholder={`/ ${maxMarks}`}
                                     value={marks[s.id] || ''}
                                     onChange={e => setMarks(m => ({ ...m, [s.id]: e.target.value }))}
-                                    className="w-24 bg-surface-main border border-border-subtle rounded-xl px-3 py-2 text-sm text-center text-text-primary font-black focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-text-muted/50"
+                                    className="w-24 bg-surface-main border border-subtle rounded-xl px-3 py-2 text-sm text-center text-text-primary font-black focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-text-muted/50"
                                 />
                             </div>
                         ))}
                     </div>
                 )}
                 {students.length > 0 && (
-                    <div className="px-6 py-4 bg-surface-main/30 border-t border-border-subtle flex justify-end">
+                    <div className="px-6 py-4 bg-surface-main/30 border-t border-subtle flex justify-end">
                         <button
                             onClick={submit}
                             disabled={saving}

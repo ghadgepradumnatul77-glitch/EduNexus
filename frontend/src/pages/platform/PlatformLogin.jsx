@@ -37,7 +37,7 @@ const PlatformLogin = () => {
                     <p className="text-text-muted mt-3 font-bold tracking-[0.2em] uppercase text-[10px]">Infrastructure Control Plane</p>
                 </div>
 
-                <div className="bg-surface-card rounded-[3rem] shadow-premium-deep border border-border-subtle p-12 backdrop-blur-xl relative overflow-hidden group">
+                <div className="bg-surface-card rounded-[3rem] shadow-premium-deep border border-subtle p-12 backdrop-blur-xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 rounded-full -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110" aria-hidden="true"></div>
                     {error && (
                         <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-medium flex items-center gap-3 animate-shake">
@@ -57,7 +57,7 @@ const PlatformLogin = () => {
                                     placeholder="ops@edunexus.infra"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-4 bg-surface-main border border-border-subtle rounded-2xl text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold"
+                                    className="w-full pl-12 pr-4 py-4 bg-surface-main border border-subtle rounded-2xl text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold"
                                 />
                             </div>
                         </div>
@@ -72,7 +72,7 @@ const PlatformLogin = () => {
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-4 bg-surface-main border border-border-subtle rounded-2xl text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold"
+                                    className="w-full pl-12 pr-4 py-4 bg-surface-main border border-subtle rounded-2xl text-text-primary placeholder:text-text-muted/40 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold"
                                 />
                             </div>
                         </div>

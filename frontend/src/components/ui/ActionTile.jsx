@@ -13,7 +13,7 @@ const ActionTile = ({
         <button
             onClick={onClick}
             className={`group flex flex-col items-center justify-center p-6 rounded-[2rem] 
-                ${color} border border-border-subtle hover:border-primary-500/50 
+                ${color} border border-subtle hover:border-primary-500/50 
                 hover:shadow-xl hover:shadow-primary-500/5 transition-all duration-300 relative overflow-hidden focus:ring-4 focus:ring-primary-500/50 outline-none`}
             aria-label={label}
         >

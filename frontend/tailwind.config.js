@@ -68,9 +68,7 @@ export default {
                     violet: '#8b5cf6',
                     blue: '#3b82f6',
                 },
-                border: {
-                    subtle: 'var(--border-subtle)',
-                },
+                'border-subtle': 'var(--border-subtle)',
                 slate: {
                     950: '#0f172a',
                 }

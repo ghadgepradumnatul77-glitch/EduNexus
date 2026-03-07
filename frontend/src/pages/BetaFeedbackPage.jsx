@@ -96,7 +96,7 @@ const BetaFeedbackPage = () => {
                     <p className="text-text-muted font-medium mt-3">Help us calibrate the internal ecosystem experience</p>
                 </div>
 
-                <form onSubmit={submit} className="bg-surface-card rounded-[2rem] shadow-premium p-10 space-y-10 border border-border-subtle">
+                <form onSubmit={submit} className="bg-surface-card rounded-[2rem] shadow-premium p-10 space-y-10 border border-subtle">
                     {/* NPS */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">

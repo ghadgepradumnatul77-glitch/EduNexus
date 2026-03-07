@@ -68,7 +68,6 @@ export default {
                     violet: '#8b5cf6',
                     blue: '#3b82f6',
                 },
-                'border-subtle': 'var(--border-subtle)',
                 slate: {
                     950: '#0f172a',
                 }
@@ -85,6 +84,9 @@ export default {
                 'xl': '12px',
                 '2xl': '16px',
                 '3xl': '24px',
+            },
+            borderColor: {
+                subtle: 'var(--border-subtle)',
             }
         },
     },

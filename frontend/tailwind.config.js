@@ -54,14 +54,14 @@ export default {
                     900: '#134e4a',
                 },
                 surface: {
-                    main: 'var(--surface-main)',
-                    card: 'var(--surface-card)',
-                    glass: 'var(--surface-glass)',
+                    main: 'rgb(var(--surface-main) / <alpha-value>)',
+                    card: 'rgb(var(--surface-card) / <alpha-value>)',
+                    glass: 'rgb(var(--surface-glass) / <alpha-value>)',
                 },
                 text: {
-                    primary: 'var(--text-primary)',
-                    secondary: 'var(--text-secondary)',
-                    muted: 'var(--text-muted)',
+                    primary: 'rgb(var(--text-primary) / <alpha-value>)',
+                    secondary: 'rgb(var(--text-secondary) / <alpha-value>)',
+                    muted: 'rgb(var(--text-muted) / <alpha-value>)',
                 },
                 accent: {
                     indigo: '#6366f1',
@@ -86,7 +86,7 @@ export default {
                 '3xl': '24px',
             },
             borderColor: {
-                'edu-border': 'var(--edu-border)',
+                'edu-border': 'rgb(var(--edu-border) / <alpha-value>)',
             }
         },
     },

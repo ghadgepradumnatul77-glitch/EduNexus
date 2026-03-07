@@ -10,23 +10,23 @@
     --primary-dark: 13, 148, 136;
     --slate-main: 30, 41, 59;
 
-    --surface-main: #f8fafc;
-    --surface-card: #ffffff;
-    --surface-glass: rgba(255, 255, 255, 0.7);
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #475569;
-    --edu-border: rgba(226, 232, 240, 0.6);
+    --surface-main: 248, 250, 252;
+    --surface-card: 255, 255, 255;
+    --surface-glass: 255, 255, 255;
+    --text-primary: 15, 23, 42;
+    --text-secondary: 71, 85, 105;
+    --text-muted: 100, 116, 139;
+    --edu-border: 226, 232, 240;
   }
 
   .dark {
-    --surface-main: #0f172a;
-    --surface-card: #1e293b;
-    --surface-glass: rgba(15, 23, 42, 0.8);
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --edu-border: rgba(51, 65, 85, 0.4);
+    --surface-main: 15, 23, 42;
+    --surface-card: 30, 41, 59;
+    --surface-glass: 30, 41, 59;
+    --text-primary: 248, 250, 252;
+    --text-secondary: 203, 213, 225;
+    --text-muted: 148, 163, 184;
+    --edu-border: 51, 65, 85;
   }
 
   body {
@@ -45,7 +45,7 @@
 
 @layer components {
   .glass {
-    @apply bg-surface-glass backdrop-blur-md border border-edu-border shadow-glass;
+    @apply bg-surface-glass/70 backdrop-blur-md border border-edu-border shadow-glass;
   }
 
   .glass-dark {

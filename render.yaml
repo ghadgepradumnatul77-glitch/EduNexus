@@ -12,7 +12,8 @@ services:
     region: ohio
     rootDir: backend
     buildCommand: npm install
-    startCommand: npm start
+    # Combined start command: Migrate -> Seed -> Start
+    startCommand: "npm run migrate && npm run seed && npm start"
     envVars:
       - key: NODE_ENV
         value: production
@@ -36,7 +37,16 @@ services:
         fromDatabase:
           name: edunexus-db
           property: password
-      - key: JWT_SECRET
+      # Strictly required by backend/config/validator.js
+      - key: JWT_ACCESS_SECRET
         generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: PLATFORM_JWT_SECRET
+        generateValue: true
+      - key: REDIS_HOST
+        value: "localhost" # Placeholder; Update to real Redis host for workers
       - key: FRONTEND_URL
+        value: "https://your-vercel-app-url.vercel.app"
+      - key: CORS_ORIGIN
         value: "https://your-vercel-app-url.vercel.app"

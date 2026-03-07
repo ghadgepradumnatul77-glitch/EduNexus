@@ -43,7 +43,8 @@
 
 @layer components {
   .glass {
-    @apply bg-surface-glass backdrop-blur-md border border-border-subtle shadow-glass;
+    @apply bg-surface-glass backdrop-blur-md border shadow-glass;
+    border-color: var(--border-subtle);
   }
 
   .glass-dark {

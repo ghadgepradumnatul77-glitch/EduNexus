@@ -1,10 +1,9 @@
-services:
-  # PostgreSQL Database
-  - type: psql
-    name: edunexus-db
+databases:
+  - name: edunexus-db
     plan: free
     region: ohio
 
+services:
   # Node.js API Service
   - type: web
     name: edunexus-api

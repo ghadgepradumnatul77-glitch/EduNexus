@@ -71,7 +71,7 @@ const MetricCard = ({
                         </ResponsiveContainer>
                     ) : (
                         <div className="h-full w-full bg-surface-main/50 rounded-lg flex items-center justify-center">
-                            <div className="w-full h-[2px] bg-border-subtle"></div>
+                            <div className="w-full h-[2px] bg-border-edu-border"></div>
                         </div>
                     )}
                 </div>

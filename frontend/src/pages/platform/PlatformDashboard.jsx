@@ -45,7 +45,7 @@ const PlatformDashboard = () => {
         <div className="space-y-8 animate-in fade-in duration-700">
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div className="bg-surface-card p-8 rounded-[2rem] border border-subtle shadow-premium flex items-center gap-8 group hover:-translate-y-1 transition-all">
+                <div className="bg-surface-card p-8 rounded-[2rem] border border-edu-border shadow-premium flex items-center gap-8 group hover:-translate-y-1 transition-all">
                     <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                         <Globe size={32} />
                     </div>
@@ -54,7 +54,7 @@ const PlatformDashboard = () => {
                         <p className="text-4xl font-black text-text-primary tracking-tight leading-none">{metrics.total}</p>
                     </div>
                 </div>
-                <div className="bg-surface-card p-8 rounded-[2rem] border border-subtle shadow-premium flex items-center gap-8 group hover:-translate-y-1 transition-all">
+                <div className="bg-surface-card p-8 rounded-[2rem] border border-edu-border shadow-premium flex items-center gap-8 group hover:-translate-y-1 transition-all">
                     <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
                         <ShieldCheck size={32} />
                     </div>
@@ -63,7 +63,7 @@ const PlatformDashboard = () => {
                         <p className="text-4xl font-black text-text-primary tracking-tight leading-none">{metrics.active}</p>
                     </div>
                 </div>
-                <div className="bg-surface-card p-8 rounded-[2rem] border border-subtle shadow-premium flex items-center gap-8 group hover:-translate-y-1 transition-all">
+                <div className="bg-surface-card p-8 rounded-[2rem] border border-edu-border shadow-premium flex items-center gap-8 group hover:-translate-y-1 transition-all">
                     <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
                         <AlertCircle size={32} />
                     </div>
@@ -75,8 +75,8 @@ const PlatformDashboard = () => {
             </div>
 
             {/* Tenant Table Section */}
-            <div className="bg-surface-card rounded-[2.5rem] border border-subtle shadow-premium overflow-hidden">
-                <div className="p-10 border-b border-subtle flex flex-wrap items-center justify-between gap-8 bg-surface-main/30">
+            <div className="bg-surface-card rounded-[2.5rem] border border-edu-border shadow-premium overflow-hidden">
+                <div className="p-10 border-b border-edu-border flex flex-wrap items-center justify-between gap-8 bg-surface-main/30">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-primary-500/10 flex items-center justify-center text-primary-500">
                             <Shield size={24} />
@@ -89,7 +89,7 @@ const PlatformDashboard = () => {
                             placeholder="Filter by Domain/ID..."
                             value={search}
                             onChange={e => setSearch(e.target.value)}
-                            className="w-full pl-12 pr-6 py-4 bg-surface-main border border-subtle rounded-2xl text-sm text-text-primary focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold placeholder:text-text-muted/40"
+                            className="w-full pl-12 pr-6 py-4 bg-surface-main border border-edu-border rounded-2xl text-sm text-text-primary focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all font-bold placeholder:text-text-muted/40"
                         />
                     </div>
                 </div>
@@ -97,7 +97,7 @@ const PlatformDashboard = () => {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead className="bg-surface-main/30">
-                            <tr className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] border-b border-subtle bg-surface-main/30">
+                            <tr className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] border-b border-edu-border bg-surface-main/30">
                                 <th className="px-10 py-5 text-left">Identity</th>
                                 <th className="px-10 py-5 text-left">Domain Vector</th>
                                 <th className="px-10 py-5 text-left">Internal ID</th>
@@ -105,7 +105,7 @@ const PlatformDashboard = () => {
                                 <th className="px-10 py-5 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-border-subtle">
+                        <tbody className="divide-y divide-border-edu-border">
                             {tenants.map((tenant) => (
                                 <tr key={tenant.id} className="hover:bg-surface-main/50 transition-colors">
                                     <td className="px-10 py-5">

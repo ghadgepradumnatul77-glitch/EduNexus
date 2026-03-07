@@ -248,7 +248,7 @@ const Dashboard = () => {
                                 </div>
                                 <select
                                     aria-label="Filter time range"
-                                    className="bg-surface-main border-subtle rounded-xl px-4 py-2 text-xs font-bold text-text-secondary focus:ring-4 focus:ring-primary-500/10 outline-none cursor-pointer"
+                                    className="bg-surface-main border-edu-border rounded-xl px-4 py-2 text-xs font-bold text-text-secondary focus:ring-4 focus:ring-primary-500/10 outline-none cursor-pointer"
                                 >
                                     <option>Last 7 Days</option>
                                     <option>Last 30 Days</option>
@@ -267,7 +267,7 @@ const Dashboard = () => {
                                                     <stop offset="95%" stopColor="#14b8a6" stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
-                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-subtle)" />
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-edu-border)" />
                                             <XAxis
                                                 dataKey="name"
                                                 axisLine={false}
@@ -357,7 +357,7 @@ const Dashboard = () => {
                             />
                         </div>
 
-                        <div className="mt-12 pt-8 border-t border-subtle">
+                        <div className="mt-12 pt-8 border-t border-edu-border">
                             <button
                                 className="w-full bg-text-primary rounded-[2rem] p-6 relative overflow-hidden group hover:shadow-2xl hover:shadow-primary-500/10 transition-all duration-300 focus:ring-4 focus:ring-primary-500/50"
                                 aria-label="Upgrade profile to unlock career paths"

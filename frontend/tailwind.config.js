@@ -86,7 +86,7 @@ export default {
                 '3xl': '24px',
             },
             borderColor: {
-                subtle: 'var(--border-subtle)',
+                'edu-border': 'var(--edu-border)',
             }
         },
     },

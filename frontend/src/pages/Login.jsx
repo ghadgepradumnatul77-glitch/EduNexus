@@ -93,8 +93,8 @@ const Login = () => {
                             </div>
                         </div>
                         <div className="flex space-x-4">
-                            <span className="px-3 py-1 bg-surface-main/30 backdrop-blur-md rounded-full text-[9px] text-text-muted font-black uppercase tracking-widest border border-subtle">Enterprise Grade</span>
-                            <span className="px-3 py-1 bg-surface-main/30 backdrop-blur-md rounded-full text-[9px] text-text-muted font-black uppercase tracking-widest border border-subtle">Secure Portal</span>
+                            <span className="px-3 py-1 bg-surface-main/30 backdrop-blur-md rounded-full text-[9px] text-text-muted font-black uppercase tracking-widest border border-edu-border">Enterprise Grade</span>
+                            <span className="px-3 py-1 bg-surface-main/30 backdrop-blur-md rounded-full text-[9px] text-text-muted font-black uppercase tracking-widest border border-edu-border">Secure Portal</span>
                         </div>
                     </motion.div>
 
@@ -169,7 +169,7 @@ const Login = () => {
                         </header>
 
                         {/* Segmented Role Toggle */}
-                        <div className="relative flex p-2 bg-surface-main rounded-[2rem] mb-12 border border-subtle shadow-inner overflow-hidden">
+                        <div className="relative flex p-2 bg-surface-main rounded-[2rem] mb-12 border border-edu-border shadow-inner overflow-hidden">
                             {roles.map((r) => (
                                 <button
                                     key={r.id}
@@ -209,7 +209,7 @@ const Login = () => {
                             <div className="space-y-8">
                                 <div className="group space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0B1F3A]/60 group-focus-within:text-[#C8A951] transition-colors">University Email ID</label>
-                                    <div className="flex items-center space-x-4 border-b-2 border-subtle focus-within:border-primary-500 transition-all duration-300 pb-3">
+                                    <div className="flex items-center space-x-4 border-b-2 border-edu-border focus-within:border-primary-500 transition-all duration-300 pb-3">
                                         <Mail className="w-5 h-5 text-text-muted group-focus-within:text-primary-500" />
                                         <input
                                             type="email"
@@ -224,7 +224,7 @@ const Login = () => {
 
                                 <div className="group space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0B1F3A]/60 group-focus-within:text-[#C8A951] transition-colors">Digital Signature / Password</label>
-                                    <div className="flex items-center space-x-4 border-b-2 border-subtle focus-within:border-primary-500 transition-all duration-300 pb-3">
+                                    <div className="flex items-center space-x-4 border-b-2 border-edu-border focus-within:border-primary-500 transition-all duration-300 pb-3">
                                         <LockKeyhole className="w-5 h-5 text-text-muted group-focus-within:text-primary-500" />
                                         <input
                                             type={showPassword ? "text" : "password"}
@@ -283,7 +283,7 @@ const Login = () => {
                 </div>
 
                 {/* INSTITUTIONAL CREDIBILITY FOOTER STRIP */}
-                <footer className="bg-surface-main/30 border-t border-subtle p-12 grid grid-cols-1 md:grid-cols-3 gap-12 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">
+                <footer className="bg-surface-main/30 border-t border-edu-border p-12 grid grid-cols-1 md:grid-cols-3 gap-12 text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">
                     <div className="flex flex-col space-y-4">
                         <div className="flex items-center space-x-3 text-[#0B1F3A]">
                             <Building2 className="w-4 h-4 text-[#C8A951]" />

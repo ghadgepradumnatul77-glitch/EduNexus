@@ -81,7 +81,7 @@ const MarkAttendance = () => {
                         value={date}
                         max={today()}
                         onChange={e => setDate(e.target.value)}
-                        className="bg-surface-main border border-subtle rounded-xl px-4 py-2 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all"
+                        className="bg-surface-main border border-edu-border rounded-xl px-4 py-2 text-sm text-text-primary focus:ring-4 focus:ring-primary-500/10 outline-none transition-all"
                     />
                 </div>
                 <div className="ml-auto flex items-center gap-3 text-sm">
@@ -99,8 +99,8 @@ const MarkAttendance = () => {
             {loading ? (
                 <div className="text-center py-12 text-text-muted italic">Loading students...</div>
             ) : (
-                <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-subtle">
-                    <div className="max-h-96 overflow-y-auto divide-y divide-border-subtle">
+                <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-edu-border">
+                    <div className="max-h-96 overflow-y-auto divide-y divide-border-edu-border">
                         {students.length === 0 ? (
                             <p className="text-center py-12 text-gray-400 text-sm">No students found in this tenant.</p>
                         ) : students.map(s => (
@@ -127,7 +127,7 @@ const MarkAttendance = () => {
                         ))}
                     </div>
                     {students.length > 0 && (
-                        <div className="px-6 py-4 bg-surface-main/30 border-t border-subtle flex justify-end">
+                        <div className="px-6 py-4 bg-surface-main/30 border-t border-edu-border flex justify-end">
                             <button
                                 onClick={submit}
                                 disabled={saving}
@@ -186,12 +186,12 @@ const MyAttendance = () => {
             </div>
 
             {/* Progress bar */}
-            <div className="bg-surface-card rounded-[2rem] shadow-premium p-8 border border-subtle">
+            <div className="bg-surface-card rounded-[2rem] shadow-premium p-8 border border-edu-border">
                 <div className="flex justify-between text-sm mb-4">
                     <span className="font-black text-text-primary tracking-tight">Attendance Rate</span>
                     <span className={`font-black ${presentPct >= 75 ? 'text-green-500' : 'text-red-500'}`}>{presentPct}%</span>
                 </div>
-                <div className="w-full h-4 rounded-full bg-surface-main overflow-hidden border border-subtle">
+                <div className="w-full h-4 rounded-full bg-surface-main overflow-hidden border border-edu-border">
                     <div
                         className={`h-full rounded-full transition-all duration-700 ease-[0.2,0,0,1] ${presentPct >= 75 ? 'bg-green-500 shadow-lg shadow-green-500/20' : 'bg-red-500 shadow-lg shadow-red-500/20'}`}
                         style={{ width: `${presentPct}%` }}
@@ -203,8 +203,8 @@ const MyAttendance = () => {
             </div>
 
             {/* Table */}
-            <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-subtle">
-                <div className="px-6 py-4 bg-surface-main/30 border-b border-subtle">
+            <div className="bg-surface-card rounded-[2rem] shadow-premium overflow-hidden border border-edu-border">
+                <div className="px-6 py-4 bg-surface-main/30 border-b border-edu-border">
                     <h3 className="text-sm font-black text-text-primary uppercase tracking-widest leading-none">Recent Records</h3>
                 </div>
                 {loading ? (

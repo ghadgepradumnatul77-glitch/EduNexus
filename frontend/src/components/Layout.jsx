@@ -78,7 +78,7 @@ const Layout = ({ children }) => {
                 transition={sidebarTransition}
                 role="navigation"
                 aria-label="Main Navigation"
-                className={`fixed inset-y-0 left-0 z-50 bg-surface-card backdrop-blur-xl border-r border-subtle 
+                className={`fixed inset-y-0 left-0 z-50 bg-surface-card backdrop-blur-xl border-r border-edu-border 
                     ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:flex lg:flex-col`}
             >
                 <div className="flex items-center justify-between h-24 px-8 mb-4">
@@ -124,7 +124,7 @@ const Layout = ({ children }) => {
                     <button
                         onClick={() => setIsCollapsed(false)}
                         aria-label="Expand sidebar"
-                        className="hidden lg:flex absolute -right-4 top-10 w-8 h-8 bg-surface-card border border-subtle rounded-full items-center justify-center shadow-premium text-text-muted hover:text-text-primary z-50 transition-all focus:ring-4 focus:ring-primary-500/50"
+                        className="hidden lg:flex absolute -right-4 top-10 w-8 h-8 bg-surface-card border border-edu-border rounded-full items-center justify-center shadow-premium text-text-muted hover:text-text-primary z-50 transition-all focus:ring-4 focus:ring-primary-500/50"
                     >
                         <ChevronRight className="w-4 h-4" />
                     </button>
@@ -169,7 +169,7 @@ const Layout = ({ children }) => {
                     <button
                         onClick={toggleTheme}
                         aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-                        className={`flex items-center justify-center ${isCollapsed ? 'w-12 h-12' : 'w-full py-3 px-6'} rounded-2xl bg-surface-main border border-subtle transition-all hover:border-primary-500/50 group`}
+                        className={`flex items-center justify-center ${isCollapsed ? 'w-12 h-12' : 'w-full py-3 px-6'} rounded-2xl bg-surface-main border border-edu-border transition-all hover:border-primary-500/50 group`}
                     >
                         {isDark ? (
                             <>
@@ -184,9 +184,9 @@ const Layout = ({ children }) => {
                         )}
                     </button>
 
-                    <div className={`relative p-4 rounded-[2rem] bg-surface-main border border-subtle transition-all duration-500 ${isCollapsed ? 'w-16 h-16 p-0 flex items-center justify-center' : 'w-full'}`}>
+                    <div className={`relative p-4 rounded-[2rem] bg-surface-main border border-edu-border transition-all duration-500 ${isCollapsed ? 'w-16 h-16 p-0 flex items-center justify-center' : 'w-full'}`}>
                         <div className="flex items-center space-x-3">
-                            <div className={`relative flex-shrink-0 w-10 h-10 rounded-xl bg-surface-card border border-subtle shadow-sm flex items-center justify-center text-text-primary font-black text-sm transition-all duration-500 ${isCollapsed ? 'mx-auto' : ''}`}>
+                            <div className={`relative flex-shrink-0 w-10 h-10 rounded-xl bg-surface-card border border-edu-border shadow-sm flex items-center justify-center text-text-primary font-black text-sm transition-all duration-500 ${isCollapsed ? 'mx-auto' : ''}`}>
                                 {user?.firstName?.[0]}{user?.lastName?.[0]}
                                 <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-surface-main rounded-full" aria-label="Online"></div>
                             </div>
@@ -216,7 +216,7 @@ const Layout = ({ children }) => {
                 {/* Header */}
                 <header
                     role="banner"
-                    className={`h-20 flex items-center justify-between px-8 bg-surface-main/80 backdrop-blur-md z-30 transition-shadow ${scrolled ? 'shadow-sm border-b border-subtle' : ''}`}
+                    className={`h-20 flex items-center justify-between px-8 bg-surface-main/80 backdrop-blur-md z-30 transition-shadow ${scrolled ? 'shadow-sm border-b border-edu-border' : ''}`}
                 >
                     <div className="flex items-center flex-1 max-w-xl">
                         <div className="relative w-full group">
@@ -225,7 +225,7 @@ const Layout = ({ children }) => {
                                 type="text"
                                 aria-label="Search dashboard"
                                 placeholder="Search everything..."
-                                className="w-full pl-12 pr-4 py-2.5 bg-surface-card/50 border border-subtle rounded-2xl outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500/50 transition-all text-sm font-medium text-text-primary"
+                                className="w-full pl-12 pr-4 py-2.5 bg-surface-card/50 border border-edu-border rounded-2xl outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500/50 transition-all text-sm font-medium text-text-primary"
                             />
                         </div>
                     </div>
@@ -233,12 +233,12 @@ const Layout = ({ children }) => {
                     <div className="flex items-center space-x-4">
                         <button
                             aria-label="View notifications"
-                            className="relative p-2.5 text-text-secondary hover:bg-surface-card rounded-2xl transition-all border border-transparent hover:border-subtle group hover:shadow-premium"
+                            className="relative p-2.5 text-text-secondary hover:bg-surface-card rounded-2xl transition-all border border-transparent hover:border-edu-border group hover:shadow-premium"
                         >
                             <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary-500 border-2 border-surface-main rounded-full animate-pulse"></span>
                         </button>
-                        <div className="w-px h-6 bg-border-subtle mx-2" aria-hidden="true"></div>
+                        <div className="w-px h-6 bg-border-edu-border mx-2" aria-hidden="true"></div>
                         <div className="hidden sm:flex flex-col text-right">
                             <span className="text-xs font-black text-text-primary leading-none">Status</span>
                             <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest mt-1">Live Beta</span>

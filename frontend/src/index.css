@@ -16,7 +16,7 @@
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --text-muted: #475569;
-    --border-subtle: rgba(226, 232, 240, 0.6);
+    --edu-border: rgba(226, 232, 240, 0.6);
   }
 
   .dark {
@@ -26,7 +26,7 @@
     --text-primary: #f8fafc;
     --text-secondary: #cbd5e1;
     --text-muted: #94a3b8;
-    --border-subtle: rgba(51, 65, 85, 0.4);
+    --edu-border: rgba(51, 65, 85, 0.4);
   }
 
   body {
@@ -45,7 +45,7 @@
 
 @layer components {
   .glass {
-    @apply bg-surface-glass backdrop-blur-md border border-subtle shadow-glass;
+    @apply bg-surface-glass backdrop-blur-md border border-edu-border shadow-glass;
   }
 
   .glass-dark {
@@ -61,7 +61,7 @@
   }
 
   .card-premium {
-    @apply bg-surface-card/80 backdrop-blur-xl rounded-[2rem] border border-subtle shadow-premium p-8 transition-all duration-500 hover:shadow-2xl hover:bg-surface-card;
+    @apply bg-surface-card/80 backdrop-blur-xl rounded-[2rem] border border-edu-border shadow-premium p-8 transition-all duration-500 hover:shadow-2xl hover:bg-surface-card;
   }
 
   .sidebar-item {

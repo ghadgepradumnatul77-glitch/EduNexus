@@ -37,16 +37,25 @@ services:
         fromDatabase:
           name: edunexus-db
           property: password
-      # Strictly required by backend/config/validator.js
+      # --- Identity & Seeding ---
+      - key: ALLOW_PROD_SEED
+        value: "true" # Required for initial demo data injection in production
+      
+      # --- Authentication Secrets ---
       - key: JWT_ACCESS_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET
         generateValue: true
       - key: PLATFORM_JWT_SECRET
         generateValue: true
+        
+      # --- Infrastructure ---
       - key: REDIS_HOST
-        value: "localhost" # Placeholder; Update to real Redis host for workers
+        value: "localhost" # Internal Redis for workers (ensure a Redis service is attached)
+        
+      # --- Cross-Origin Resource Sharing (CORS) ---
+      # IMPORTANT: Update these to your real Vercel domain
       - key: FRONTEND_URL
-        value: "https://your-vercel-app-url.vercel.app"
+        value: "https://edunexus-frontend.vercel.app" 
       - key: CORS_ORIGIN
-        value: "https://your-vercel-app-url.vercel.app"
+        value: "https://edunexus-frontend.vercel.app"

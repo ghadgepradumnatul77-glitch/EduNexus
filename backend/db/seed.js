@@ -8,8 +8,8 @@ const __dirname = path.dirname(__filename);
 
 async function runSeed() {
     // 1. PRODUCTION GUARD (Hard Fail-Safe)
-    if (process.env.NODE_ENV === 'production') {
-        console.error('❌ SEED ABORTED: Cannot run seed scripts in PRODUCTION environment.');
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_PROD_SEED !== 'true') {
+        console.error('❌ SEED ABORTED: Cannot run seed scripts in PRODUCTION environment without ALLOW_PROD_SEED=true.');
         process.exit(1);
     }
 

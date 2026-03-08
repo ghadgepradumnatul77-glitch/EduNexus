@@ -20,8 +20,14 @@ async function runSeed() {
         const seedPath = path.join(__dirname, 'seed_v2.sql');
         const seed = fs.readFileSync(seedPath, 'utf8');
 
-        // Execute seed
-        await pool.query(seed);
+        // Execute seed with superadmin bypass
+        const client = await pool.connect();
+        try {
+            await client.query("SELECT set_config('app.is_superadmin', 'true', true)");
+            await client.query(seed);
+        } finally {
+            client.release();
+        }
 
         console.log('✅ Database seeded successfully');
         console.log('\n🔐 IDENTITY DIRECTORY (SANDBOX)');

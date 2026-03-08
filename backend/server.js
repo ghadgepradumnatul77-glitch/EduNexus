@@ -57,6 +57,15 @@ app.get('/api/health/ready', healthController.readinessCheck);
 app.use(globalLimiter); // Layer 1
 app.use(ipLimiter);     // Layer 2
 
+// 4. Standard Health Checks
+app.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'EduNexus Enterprise API v2 (Hardened) is active.',
+        version: '2.0.1'
+    });
+});
+
 // 4. CSRF Protection (Double-Submit Pattern)
 app.use(csrfProtection);
 

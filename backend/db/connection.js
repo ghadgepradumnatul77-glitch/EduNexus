@@ -3,16 +3,22 @@ import '../config/env.js';
 
 const { Pool } = pg;
 
-const poolConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT) || 5432,
-  database: process.env.DB_NAME || 'edunexus',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD,
-  max: 20,
-};
+// Support for individual components or a full connection string (standard for Render/Heroku)
+const connectionString = process.env.DATABASE_URL;
 
-// 1. SSL Configuration for Production (Required by Render/Managed DBs)
+const poolConfig = connectionString
+  ? { connectionString }
+  : {
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT) || 5432,
+    database: process.env.DB_NAME || 'edunexus',
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD,
+  };
+
+poolConfig.max = 20;
+
+// 1. SSL Configuration for Production (Render/Managed DBs)
 if (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') {
   poolConfig.ssl = {
     rejectUnauthorized: false
@@ -22,16 +28,16 @@ if (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') {
 // 1. Tenant Application Pool (ENFORCED RLS)
 const tenantPool = new Pool({
   ...poolConfig,
-  user: process.env.TENANT_DB_USER || poolConfig.user,
-  password: process.env.TENANT_DB_PASSWORD || poolConfig.password,
-  max: 20,
+  // If connectionString is used, user/pass are ignored unless explicitly overridden here
+  user: connectionString ? undefined : (process.env.TENANT_DB_USER || poolConfig.user),
+  password: connectionString ? undefined : (process.env.TENANT_DB_PASSWORD || poolConfig.password),
 });
 
 // 2. Platform Management Pool (BYPASS RLS)
 const platformPool = new Pool({
   ...poolConfig,
-  user: process.env.PLATFORM_DB_USER || poolConfig.user,
-  password: process.env.PLATFORM_DB_PASSWORD || poolConfig.password,
+  user: connectionString ? undefined : (process.env.PLATFORM_DB_USER || poolConfig.user),
+  password: connectionString ? undefined : (process.env.PLATFORM_DB_PASSWORD || poolConfig.password),
   max: 5,
 });
 

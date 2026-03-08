@@ -53,15 +53,14 @@ const platformPool = new Pool(createConfig(process.env.PLATFORM_DB_USER, process
 // Primary Pool for migrations/maintenance (Matches base defaults)
 const pool = new Pool(createConfig(null, null, 2));
 
-/**
- * Platform Query
- * Bypasses RLS by using the platformPool (connected as platform_role).
- * No runtime session variable required.
- */
 export const platformQuery = async (text, params) => {
   const start = Date.now();
+  const client = await platformPool.connect();
   try {
-    const res = await platformPool.query(text, params);
+    // Explicit bypass for managed environments
+    await client.query("SELECT set_config('app.is_superadmin', 'true', true)");
+
+    const res = await client.query(text, params);
     const duration = Date.now() - start;
     if (process.env.NODE_ENV !== 'production' && process.env.DEBUG_DB === 'true') {
       console.log(`Executed platform query`, { duration, rows: res.rowCount });
@@ -70,6 +69,8 @@ export const platformQuery = async (text, params) => {
   } catch (error) {
     console.error('Platform query error:', error);
     throw error;
+  } finally {
+    client.release();
   }
 };
 

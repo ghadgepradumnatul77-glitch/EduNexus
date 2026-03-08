@@ -4,7 +4,7 @@
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'platform_role') THEN
-        CREATE ROLE platform_role BYPASSRLS;
+        CREATE ROLE platform_role;
     END IF;
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'tenant_role') THEN
         CREATE ROLE tenant_role;
@@ -101,10 +101,8 @@ BEGIN
         EXECUTE format('DROP POLICY IF EXISTS tenant_isolation ON %I', t);
         EXECUTE format($f$
             CREATE POLICY tenant_isolation ON %I FOR ALL 
-            TO tenant_role
-            USING (
-                organization_id = (current_setting('app.current_tenant', true)::uuid)
-            )
+            USING (app_tenant_access_allowed(organization_id))
+            WITH CHECK (app_tenant_access_allowed(organization_id))
         $f$, t);
     END LOOP;
 END $$;

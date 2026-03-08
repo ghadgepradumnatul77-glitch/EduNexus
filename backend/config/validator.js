@@ -6,17 +6,21 @@ export const validateEnv = () => {
     const required = [
         'JWT_ACCESS_SECRET',
         'JWT_REFRESH_SECRET',
-        'PLATFORM_JWT_SECRET',
-        'DB_HOST',
-        'DB_NAME',
-        'DB_USER',
-        'DB_PASSWORD',
-        'REDIS_HOST'
+        'PLATFORM_JWT_SECRET'
     ];
+
+    // Check for either DATABASE_URL OR individual components
+    const hasConnectionStr = !!process.env.DATABASE_URL;
+    const hasDbComponents = ['DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PASSWORD'].every(key => !!process.env[key]);
+
+    if (!hasConnectionStr && !hasDbComponents) {
+        console.error('❌ CRITICAL: Missing database configuration. Provide either DATABASE_URL or DB_HOST/NAME/USER/PASS.');
+        process.exit(1);
+    }
 
     const missing = required.filter(key => !process.env[key]);
     if (missing.length > 0) {
-        console.error(`❌ CRITICAL: Missing required environment variables: ${missing.join(', ')}`);
+        console.error(`❌ CRITICAL: Missing required security environment variables: ${missing.join(', ')}`);
         process.exit(1);
     }
 

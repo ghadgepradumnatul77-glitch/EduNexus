@@ -83,10 +83,10 @@ LANGUAGE sql
 STABLE
 AS $$
   SELECT
-    COALESCE(current_setting('app.is_superadmin', true), 'false')::boolean = true
+    COALESCE(NULLIF(current_setting('app.is_superadmin', true), ''), 'false')::boolean = true
     OR (
-      current_setting('app.current_tenant', true) IS NOT NULL
-      AND org_id = current_setting('app.current_tenant', true)::uuid
+      NULLIF(current_setting('app.current_tenant', true), '') IS NOT NULL
+      AND org_id = NULLIF(current_setting('app.current_tenant', true), '')::uuid
     );
 $$;
 

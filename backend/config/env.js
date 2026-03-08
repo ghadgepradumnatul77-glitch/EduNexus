@@ -12,7 +12,7 @@ console.log(`🔍 Loading fallback env from: ${path.resolve(process.cwd(), '.env
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 // Parse specialized flags
-process.env.SAAS_MODE = process.env.SAAS_MODE === 'true';
+process.env.SAAS_MODE = String(process.env.SAAS_MODE === 'true');
 
 console.log(`📡 Environment: ${NODE_ENV} | Config: ${envFile} | SaaS Mode: ${process.env.SAAS_MODE}`);
 

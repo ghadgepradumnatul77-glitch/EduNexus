@@ -20,9 +20,12 @@ poolConfig.max = 20;
 
 // 1. SSL Configuration for Production (Render/Managed DBs)
 if (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') {
+  console.log('🔒 [DB-INIT] SSL: Enabled (Production Mode)');
   poolConfig.ssl = {
     rejectUnauthorized: false
   };
+} else {
+  console.log('🔓 [DB-INIT] SSL: Disabled');
 }
 
 // 1. Tenant Application Pool (ENFORCED RLS)

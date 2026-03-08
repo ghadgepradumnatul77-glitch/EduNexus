@@ -8,16 +8,8 @@ const __dirname = path.dirname(__filename);
 
 async function runMigration() {
     try {
-        console.log('🚀 Running database migrations...');
-        if (process.env.DATABASE_URL) {
-            console.log('📡 Connection: DATABASE_URL detected (Render standard)');
-        } else {
-            console.log(`📡 Target: ${process.env.DB_HOST || 'localhost'} | User: ${process.env.DB_USER || 'postgres'} | DB: ${process.env.DB_NAME || 'edunexus'}`);
-        }
-
-        if (process.env.NODE_ENV === 'production') {
-            console.log('🔒 SSL: Enabled (Managed Database Connection)');
-        }
+        console.log('🚀 [MIGRATE] Initializing database migration flow...');
+        // Connection parameters are logged automatically in connection.js
 
         // Read schema file
         const schemaPath = path.join(__dirname, 'schema.sql');

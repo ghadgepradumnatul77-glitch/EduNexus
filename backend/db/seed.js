@@ -20,11 +20,16 @@ async function runSeed() {
         const seedPath = path.join(__dirname, 'seed_v2.sql');
         const seed = fs.readFileSync(seedPath, 'utf8');
 
-        // Execute seed with superadmin bypass
+        // Execute seed with superadmin bypass (Scoped to Transaction)
         const client = await pool.connect();
         try {
+            await client.query('BEGIN');
             await client.query("SELECT set_config('app.is_superadmin', 'true', true)");
             await client.query(seed);
+            await client.query('COMMIT');
+        } catch (err) {
+            await client.query('ROLLBACK');
+            throw err;
         } finally {
             client.release();
         }

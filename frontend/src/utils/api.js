@@ -21,7 +21,7 @@ api.interceptors.response.use(
 
             try {
                 // Call refresh endpoint - browser will automatically send the refreshToken cookie
-                await axios.post('/api/auth/refresh', {}, { withCredentials: true });
+                await api.post('/auth/refresh', {});
 
                 // Retry the original request
                 return api(originalRequest);

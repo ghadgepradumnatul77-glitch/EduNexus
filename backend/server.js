@@ -38,8 +38,20 @@ app.use(helmet({
     crossOriginEmbedderPolicy: process.env.NODE_ENV === 'production',
 }));
 
+const allowedOrigins = [
+    'http://localhost:5173',
+    process.env.CORS_ORIGIN,
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, Postman, health checks)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.some(allowed => origin === allowed || origin.endsWith('.vercel.app'))) {
+            return callback(null, origin);
+        }
+        return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-XSRF-TOKEN', 'X-Requested-With']

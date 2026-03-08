@@ -22,7 +22,7 @@ export const csrfProtection = (req, res, next) => {
     const origin = req.get('origin');
     const allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173';
 
-    if (origin && origin !== allowedOrigin) {
+    if (origin && origin !== allowedOrigin && !origin.endsWith('.vercel.app')) {
         logAudit(req, {
             action: 'CSRF_FAILURE',
             entityType: 'NETWORK',

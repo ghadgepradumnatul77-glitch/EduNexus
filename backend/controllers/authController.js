@@ -28,12 +28,14 @@ const hashToken = (token) => {
     return crypto.createHash('sha256').update(token).digest('hex');
 };
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const setCsrfCookie = (res) => {
     const csrfToken = crypto.randomBytes(32).toString('hex');
     res.cookie('xsrf-token', csrfToken, {
         httpOnly: false, // Must be accessible by client for Double-Submit
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict',
+        secure: isProduction,
+        sameSite: isProduction ? 'None' : 'Strict',
         maxAge: 7 * 24 * 60 * 60 * 1000 // Match Refresh Token expiry
     });
 };
@@ -129,15 +131,15 @@ export const login = async (req, res) => {
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            secure: isProduction,
+            sameSite: isProduction ? 'None' : 'Strict',
             maxAge: 15 * 60 * 1000
         });
 
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            secure: isProduction,
+            sameSite: isProduction ? 'None' : 'Strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -211,15 +213,15 @@ export const refreshToken = async (req, res) => {
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            secure: isProduction,
+            sameSite: isProduction ? 'None' : 'Strict',
             maxAge: 15 * 60 * 1000
         });
 
         res.cookie('refreshToken', newRefreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
+            secure: isProduction,
+            sameSite: isProduction ? 'None' : 'Strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 

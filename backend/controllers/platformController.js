@@ -15,6 +15,7 @@ const setCsrfCookie = (res) => {
 
 export const platformLogin = async (req, res) => {
     const { email, password } = req.body;
+    console.log(`[PLATFORM-AUTH] Login attempt for: ${email}`);
 
     try {
         const result = await platformQuery(
@@ -24,11 +25,13 @@ export const platformLogin = async (req, res) => {
 
         const admin = result.rows[0];
         if (!admin || !admin.is_active) {
+            console.warn(`[PLATFORM-AUTH] Admin not found or inactive: ${email}`);
             return res.status(401).json({ success: false, message: 'Invalid credentials or inactive account.' });
         }
 
         const isValid = await bcrypt.compare(password, admin.password_hash);
         if (!isValid) {
+            console.warn(`[PLATFORM-AUTH] Password mismatch for: ${email}`);
             return res.status(401).json({ success: false, message: 'Invalid credentials.' });
         }
 
@@ -37,6 +40,8 @@ export const platformLogin = async (req, res) => {
             process.env.PLATFORM_JWT_SECRET,
             { expiresIn: '1h' }
         );
+
+        console.log(`[PLATFORM-AUTH] Login successful for: ${email}. Building session.`);
 
         res.cookie('platformAccessToken', accessToken, {
             httpOnly: true,

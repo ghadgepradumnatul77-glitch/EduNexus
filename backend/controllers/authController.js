@@ -41,6 +41,7 @@ const setCsrfCookie = (res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(`[AUTH] Login attempt for: ${email}`);
         const ipAddress = req.ip || req.connection.remoteAddress;
 
         const userResult = await platformQuery(
@@ -54,6 +55,7 @@ export const login = async (req, res) => {
         );
 
         if (userResult.rows.length === 0) {
+            console.warn(`[AUTH] User not found: ${email}`);
             return res.status(401).json({ success: false, message: 'Invalid credentials.' });
         }
 
@@ -64,6 +66,7 @@ export const login = async (req, res) => {
             'SELECT status, suspension_reason FROM organizations WHERE id = $1',
             [user.organization_id]
         );
+        console.log(`[AUTH] Checking organization status for ID: ${user.organization_id}`);
         if (orgResult.rows[0]?.status === 'suspended') {
             return res.status(403).json({
                 success: false,
@@ -82,9 +85,11 @@ export const login = async (req, res) => {
             });
         }
 
+        console.log(`[AUTH] Validating password hash for: ${email}`);
         const isValid = await bcrypt.compare(password, user.password_hash);
 
         if (!isValid) {
+            console.warn(`[AUTH] Password mismatch for: ${email}`);
             const newFailedAttempts = (user.failed_attempts || 0) + 1;
             let lockedUntil = null;
             if (newFailedAttempts >= MAX_LOGIN_ATTEMPTS) {
@@ -112,6 +117,7 @@ export const login = async (req, res) => {
             [ipAddress, user.id]
         );
 
+        console.log(`[AUTH] Login successful for: ${email}. Generating tokens.`);
         const { accessToken, refreshToken } = generateTokens(user.id);
         const tokenHash = hashToken(refreshToken);
         const familyId = crypto.randomUUID();

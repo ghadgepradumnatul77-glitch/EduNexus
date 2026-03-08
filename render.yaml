@@ -4,15 +4,16 @@ databases:
     region: ohio
 
 services:
-  # Node.js API Service
+  # --- EduNexus API Core ---
+  # Dashboard Location: Projects -> EduNexus -> edunexus-api-v2
   - type: web
-    name: edunexus-api
+    name: edunexus-api-v2
     env: node
     plan: free
     region: ohio
     rootDir: backend
     buildCommand: npm install
-    # Combined start command: Migrate -> Seed -> Start
+    # Combined: Migration -> Seed (Allowed) -> Production Start
     startCommand: "npm run migrate && npm run seed && npm start"
     envVars:
       - key: NODE_ENV

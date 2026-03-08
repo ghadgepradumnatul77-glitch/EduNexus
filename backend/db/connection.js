@@ -57,16 +57,20 @@ export const platformQuery = async (text, params) => {
   const start = Date.now();
   const client = await platformPool.connect();
   try {
-    // Explicit bypass for managed environments
+    // Wrap in transaction so set_config persists for the actual query
+    await client.query('BEGIN');
     await client.query("SELECT set_config('app.is_superadmin', 'true', true)");
 
     const res = await client.query(text, params);
+    await client.query('COMMIT');
+
     const duration = Date.now() - start;
     if (process.env.NODE_ENV !== 'production' && process.env.DEBUG_DB === 'true') {
       console.log(`Executed platform query`, { duration, rows: res.rowCount });
     }
     return res;
   } catch (error) {
+    await client.query('ROLLBACK').catch(() => { });
     console.error('Platform query error:', error);
     throw error;
   } finally {

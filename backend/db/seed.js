@@ -36,7 +36,8 @@ async function runSeed() {
 
         process.exit(0);
     } catch (error) {
-        console.error('❌ Seed failed:', error);
+        console.error('❌ [SEED] Fatal Error during seeding:', error.message);
+        if (error.stack) console.error(error.stack);
         process.exit(1);
     }
 }

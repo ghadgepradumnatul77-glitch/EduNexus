@@ -16,39 +16,42 @@ const poolConfig = connectionString
     password: process.env.DB_PASSWORD,
   };
 
-poolConfig.max = 20;
-
 // 1. SSL Configuration for Production (Render/Managed DBs)
-if (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') {
+const ssl = (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true')
+  ? { rejectUnauthorized: false }
+  : null;
+
+if (ssl) {
   console.log('🔒 [DB-INIT] SSL: Enabled (Production Mode)');
-  poolConfig.ssl = {
-    rejectUnauthorized: false
-  };
 } else {
   console.log('🔓 [DB-INIT] SSL: Disabled');
 }
 
+// 2. Base Configuration Factory
+const createConfig = (customUser, customPass, max = 20) => {
+  const config = connectionString
+    ? { connectionString }
+    : {
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT) || 5432,
+      database: process.env.DB_NAME || 'edunexus',
+      user: customUser || process.env.DB_USER || 'postgres',
+      password: customPass || process.env.DB_PASSWORD,
+    };
+
+  config.max = max;
+  if (ssl) config.ssl = ssl;
+  return config;
+};
+
 // 1. Tenant Application Pool (ENFORCED RLS)
-const tenantPool = new Pool({
-  ...poolConfig,
-  // If connectionString is used, user/pass are ignored unless explicitly overridden here
-  user: connectionString ? undefined : (process.env.TENANT_DB_USER || poolConfig.user),
-  password: connectionString ? undefined : (process.env.TENANT_DB_PASSWORD || poolConfig.password),
-});
+const tenantPool = new Pool(createConfig(process.env.TENANT_DB_USER, process.env.TENANT_DB_PASSWORD, 20));
 
 // 2. Platform Management Pool (BYPASS RLS)
-const platformPool = new Pool({
-  ...poolConfig,
-  user: connectionString ? undefined : (process.env.PLATFORM_DB_USER || poolConfig.user),
-  password: connectionString ? undefined : (process.env.PLATFORM_DB_PASSWORD || poolConfig.password),
-  max: 5,
-});
+const platformPool = new Pool(createConfig(process.env.PLATFORM_DB_USER, process.env.PLATFORM_DB_PASSWORD, 5));
 
-// Primary Pool for migrations/maintenance
-const pool = new Pool({
-  ...poolConfig,
-  max: 2,
-});
+// Primary Pool for migrations/maintenance (Matches base defaults)
+const pool = new Pool(createConfig(null, null, 2));
 
 /**
  * Platform Query

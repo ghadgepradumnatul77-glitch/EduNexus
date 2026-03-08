@@ -3,35 +3,41 @@ import '../config/env.js';
 
 const { Pool } = pg;
 
-// 1. Tenant Application Pool (ENFORCED RLS)
-// This pool MUST connect as a user with the 'tenant_role'
-const tenantPool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT) || 5432,
-  database: process.env.DB_NAME || 'edunexus',
-  user: process.env.TENANT_DB_USER || 'postgres', // Falls back to postgres for local, but configured for tenant_role in prod
-  password: process.env.TENANT_DB_PASSWORD || process.env.DB_PASSWORD,
-  max: 20,
-});
-
-// 2. Platform Management Pool (BYPASS RLS)
-// This pool MUST connect as a user with the 'platform_role'
-const platformPool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT) || 5432,
-  database: process.env.DB_NAME || 'edunexus',
-  user: process.env.PLATFORM_DB_USER || 'postgres', // Falls back to postgres for local, but configured for platform_role in prod
-  password: process.env.PLATFORM_DB_PASSWORD || process.env.DB_PASSWORD,
-  max: 5,
-});
-
-// Primary Pool for migrations/maintenance
-const pool = new Pool({
+const poolConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT) || 5432,
   database: process.env.DB_NAME || 'edunexus',
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD,
+  max: 20,
+};
+
+// 1. SSL Configuration for Production (Required by Render/Managed DBs)
+if (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') {
+  poolConfig.ssl = {
+    rejectUnauthorized: false
+  };
+}
+
+// 1. Tenant Application Pool (ENFORCED RLS)
+const tenantPool = new Pool({
+  ...poolConfig,
+  user: process.env.TENANT_DB_USER || poolConfig.user,
+  password: process.env.TENANT_DB_PASSWORD || poolConfig.password,
+  max: 20,
+});
+
+// 2. Platform Management Pool (BYPASS RLS)
+const platformPool = new Pool({
+  ...poolConfig,
+  user: process.env.PLATFORM_DB_USER || poolConfig.user,
+  password: process.env.PLATFORM_DB_PASSWORD || poolConfig.password,
+  max: 5,
+});
+
+// Primary Pool for migrations/maintenance
+const pool = new Pool({
+  ...poolConfig,
   max: 2,
 });
 

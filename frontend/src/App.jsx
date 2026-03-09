@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AttendancePage from './pages/AttendancePage';
@@ -8,9 +9,15 @@ import MarksPage from './pages/MarksPage';
 import UsersPage from './pages/UsersPage';
 import AdminDashboard from './pages/AdminDashboard';
 import BetaFeedbackPage from './pages/BetaFeedbackPage';
-import PlatformLayout from './pages/platform/PlatformLayout';
-import PlatformLogin from './pages/platform/PlatformLogin';
-import PlatformDashboard from './pages/platform/PlatformDashboard';
+import NoticeBoardPage from './pages/NoticeBoardPage';
+import AcademicHubPage from './pages/AcademicHubPage';
+import SkillExchangePage from './pages/SkillExchangePage';
+import LostFoundPage from './pages/LostFoundPage';
+
+import AppLayout from './components/layout/AppLayout';
+import InfraLayout from './pages/infra/InfraLayout';
+import InfraLogin from './pages/infra/InfraLogin';
+import InfraDashboard from './pages/infra/InfraDashboard';
 
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
@@ -20,48 +27,31 @@ function App() {
             <ErrorBoundary>
                 <BrowserRouter>
                     <Routes>
-                        {/* Platform Admin Control Plane */}
-                        <Route path="/platform/login" element={<PlatformLogin />} />
-                        <Route path="/platform" element={<PlatformLayout />}>
+                        <Route path="/infra/login" element={<InfraLogin />} />
+                        <Route path="/infra" element={<InfraLayout />}>
                             <Route index element={<Navigate to="dashboard" replace />} />
-                            <Route path="dashboard" element={<PlatformDashboard />} />
-                            <Route path="tenants" element={<PlatformDashboard />} /> {/* Reusing for now */}
+                            <Route path="dashboard" element={<InfraDashboard />} />
+                            <Route path="tenants" element={<InfraDashboard />} />
                         </Route>
 
                         <Route path="/login" element={<Login />} />
 
-                        <Route path="/dashboard" element={
-                            <ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><Dashboard /></ProtectedRoute>
-                        } />
+                        <Route path="/app" element={<AppLayout />}>
+                            <Route index element={<Navigate to="dashboard" replace />} />
+                            <Route path="dashboard" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><Dashboard /></ProtectedRoute>} />
+                            <Route path="attendance" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><AttendancePage /></ProtectedRoute>} />
+                            <Route path="marks" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><MarksPage /></ProtectedRoute>} />
+                            <Route path="notice-board" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><NoticeBoardPage /></ProtectedRoute>} />
+                            <Route path="academic-hub" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><AcademicHubPage /></ProtectedRoute>} />
+                            <Route path="skills" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><SkillExchangePage /></ProtectedRoute>} />
+                            <Route path="lost-found" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><LostFoundPage /></ProtectedRoute>} />
+                            <Route path="users" element={<ProtectedRoute allowedRoles={['Admin']}><UsersPage /></ProtectedRoute>} />
+                            <Route path="admin" element={<ProtectedRoute allowedRoles={['Admin']}><AdminDashboard /></ProtectedRoute>} />
+                            <Route path="beta-feedback" element={<ProtectedRoute allowedRoles={['Admin']}><BetaFeedbackPage /></ProtectedRoute>} />
+                        </Route>
 
-                        <Route path="/attendance" element={
-                            <ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><AttendancePage /></ProtectedRoute>
-                        } />
-
-                        <Route path="/marks" element={
-                            <ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><MarksPage /></ProtectedRoute>
-                        } />
-
-                        <Route path="/users" element={
-                            <ProtectedRoute allowedRoles={['Admin', 'Super Admin']}>
-                                <UsersPage />
-                            </ProtectedRoute>
-                        } />
-
-                        <Route path="/admin" element={
-                            <ProtectedRoute allowedRoles={['Super Admin']}>
-                                <AdminDashboard />
-                            </ProtectedRoute>
-                        } />
-
-                        <Route path="/beta-feedback" element={
-                            <ProtectedRoute allowedRoles={['Admin', 'Super Admin']}>
-                                <BetaFeedbackPage />
-                            </ProtectedRoute>
-                        } />
-
-                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
+                        <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
                     </Routes>
                 </BrowserRouter>
             </ErrorBoundary>

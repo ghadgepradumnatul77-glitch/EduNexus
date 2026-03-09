@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Shield, Lock, Mail, Loader2, ArrowRight } from 'lucide-react';
 import axios from 'axios';
 
-const PlatformLogin = () => {
+const InfraLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ const PlatformLogin = () => {
 
         try {
             await axios.post('/api/platform/auth/login', { email, password });
-            navigate('/platform/dashboard');
+            navigate('/infra/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Platform authentication failed.');
         } finally {
@@ -109,4 +109,4 @@ const PlatformLogin = () => {
     );
 };
 
-export default PlatformLogin;
+export default InfraLogin;

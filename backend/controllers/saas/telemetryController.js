@@ -6,7 +6,7 @@ import { publishEvent, EVENTS } from '../../services/eventBus.js';
  */
 export const trackProductEvent = async (req, res) => {
     const { eventKey, eventType, metadata } = req.body;
-    const orgId = req.tenantId; // From identity middleware
+    const tenantId = req.tenantId; // From identity middleware
     const userId = req.user?.id;
 
     if (!eventKey) {
@@ -15,7 +15,7 @@ export const trackProductEvent = async (req, res) => {
 
     try {
         // We use the eventBus for telemetry to keep API latency low
-        await publishEvent(orgId, 'product.telemetry', {
+        await publishEvent(tenantId, 'product.telemetry', {
             userId,
             eventKey,
             eventType: eventType || 'info',

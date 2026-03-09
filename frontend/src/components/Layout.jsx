@@ -17,14 +17,22 @@ import {
     Bell,
     ChevronRight,
     Sun,
-    Moon
+    Moon,
+    Megaphone,
+    BookOpen,
+    Handshake,
+    PackageSearch
 } from 'lucide-react';
 import { BRAND_CONFIG } from '../config/brand';
 
 const NAV_ITEMS = [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['Admin', 'Faculty', 'Student'] },
+    { label: 'Notice Board', path: '/notice-board', icon: Megaphone, roles: ['Admin', 'Faculty', 'Student'] },
+    { label: 'Academic Hub', path: '/academic-hub', icon: BookOpen, roles: ['Admin', 'Faculty', 'Student'] },
     { label: 'Attendance', path: '/attendance', icon: ClipboardCheck, roles: ['Admin', 'Faculty', 'Student'] },
     { label: 'Marks', path: '/marks', icon: BarChart3, roles: ['Admin', 'Faculty', 'Student'] },
+    { label: 'Skill Exchange', path: '/skills', icon: Handshake, roles: ['Admin', 'Faculty', 'Student'] },
+    { label: 'Lost & Found', path: '/lost-found', icon: PackageSearch, roles: ['Admin', 'Faculty', 'Student'] },
     { label: 'Users', path: '/users', icon: Users, roles: ['Admin', 'Super Admin'] },
     { label: 'Admin Panel', path: '/admin', icon: Settings, roles: ['Super Admin'] },
     { label: 'Beta Feedback', path: '/beta-feedback', icon: MessageSquare, roles: ['Admin', 'Super Admin'] },

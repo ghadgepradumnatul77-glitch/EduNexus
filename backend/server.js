@@ -18,6 +18,14 @@ import platformRoutes from './routes/platform.js';
 import analyticsRoutes from './routes/analytics.js';
 import saasRoutes from './routes/saas.js';
 import betaRoutes from './routes/beta.js';
+
+// Campus Modules
+import announcementRoutes from './routes/announcements.js';
+import academicRoutes from './routes/academic.js';
+import skillRoutes from './routes/skills.js';
+import lostFoundRoutes from './routes/lostfound.js';
+import aiRoutes from './routes/ai.js';
+
 import { trackUsage } from './middleware/usage.js';
 import { requireActiveTenant } from './middleware/suspension.js';
 import { initEventBus } from './services/eventBus.js';
@@ -106,6 +114,13 @@ app.use('/api/saas', saasRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/beta', betaRoutes);
+
+// Campus Module Routes
+app.use('/api/announcements', announcementRoutes);
+app.use('/api/academic', academicRoutes);
+app.use('/api/skills', skillRoutes);
+app.use('/api/lostfound', lostFoundRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Fallback & Error Handling
 app.use((req, res) => {

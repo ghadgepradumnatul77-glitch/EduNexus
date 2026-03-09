@@ -2,12 +2,12 @@ import React from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { Shield, LayoutDashboard, Globe, Settings, LogOut } from 'lucide-react';
 
-const PlatformLayout = () => {
+const InfraLayout = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
         // Logic to clear platform cookies/session
-        navigate('/platform/login');
+        navigate('/infra/login');
     };
 
     return (
@@ -22,15 +22,15 @@ const PlatformLayout = () => {
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 mt-4">
-                    <Link to="/platform" className="flex items-center gap-4 px-6 py-3.5 rounded-2xl text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
+                    <Link to="/infra" className="flex items-center gap-4 px-6 py-3.5 rounded-2xl text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
                         <LayoutDashboard size={20} className="group-hover:scale-110 transition-transform" />
                         <span className="font-bold tracking-tight">System Node</span>
                     </Link>
-                    <Link to="/platform/tenants" className="flex items-center gap-4 px-6 py-3.5 rounded-2xl text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
+                    <Link to="/infra/tenants" className="flex items-center gap-4 px-6 py-3.5 rounded-2xl text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
                         <Globe size={20} className="group-hover:scale-110 transition-transform" />
                         <span className="font-bold tracking-tight">Tenancy Matrix</span>
                     </Link>
-                    <Link to="/platform/settings" className="flex items-center gap-4 px-6 py-3.5 rounded-2xl text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
+                    <Link to="/infra/settings" className="flex items-center gap-4 px-6 py-3.5 rounded-2xl text-slate-400 hover:bg-white/5 hover:text-white transition-all group">
                         <Settings size={20} className="group-hover:scale-110 transition-transform" />
                         <span className="font-bold tracking-tight">Core Config</span>
                     </Link>
@@ -38,7 +38,7 @@ const PlatformLayout = () => {
 
                 <div className="p-6 border-t border-edu-border">
                     <button
-                        onClick={() => { localStorage.removeItem('platform_token'); navigate('/platform/login'); }}
+                        onClick={() => { localStorage.removeItem('platform_token'); navigate('/infra/login'); }}
                         className="flex items-center gap-4 w-full px-6 py-3.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-2xl transition-all group font-bold"
                     >
                         <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
@@ -70,4 +70,4 @@ const PlatformLayout = () => {
     );
 };
 
-export default PlatformLayout;
+export default InfraLayout;

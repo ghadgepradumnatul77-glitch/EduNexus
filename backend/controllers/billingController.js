@@ -51,7 +51,7 @@ export const handleWebhook = async (req, res) => {
  * Handle initial subscription creation
  */
 async function handleSubscriptionCreated(session) {
-    const orgId = session.metadata.orgId;
+    const tenantId = session.metadata.tenantId;
     const customerId = session.customer;
     const subscriptionId = session.subscription;
 
@@ -61,7 +61,7 @@ async function handleSubscriptionCreated(session) {
         `UPDATE organizations 
      SET stripe_customer_id = $1, stripe_subscription_id = $2 
      WHERE id = $3`,
-        [customerId, subscriptionId, orgId]
+        [customerId, subscriptionId, tenantId]
     );
 }
 

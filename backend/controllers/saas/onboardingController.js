@@ -23,7 +23,7 @@ export const registerOrganization = async (req, res) => {
                  VALUES ($1, $2, 'free', 'active') RETURNING id`,
                 [orgName, orgSlug]
             );
-            const orgId = orgResult.rows[0].id;
+            const tenantId = orgResult.rows[0].id;
 
             // 3. Seed Core Roles (Admin, Faculty, Student)
             const roles = ['admin', 'faculty', 'student'];
@@ -31,8 +31,8 @@ export const registerOrganization = async (req, res) => {
 
             for (const roleName of roles) {
                 const roleResult = await client.query(
-                    'INSERT INTO roles (name, organization_id) VALUES ($1, $2) RETURNING id',
-                    [roleName, orgId]
+                    'INSERT INTO roles (name, tenant_id) VALUES ($1, $2) RETURNING id',
+                    [roleName, tenantId]
                 );
                 roleMap[roleName] = roleResult.rows[0].id;
             }
@@ -40,12 +40,12 @@ export const registerOrganization = async (req, res) => {
             // 4. Create Organization Owner
             const hashedPassword = await bcrypt.hash(adminPassword, 12);
             const userResult = await client.query(
-                `INSERT INTO users (email, password_hash, first_name, last_name, role_id, organization_id) 
+                `INSERT INTO users (email, password_hash, first_name, last_name, role_id, tenant_id) 
                  VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-                [adminEmail, hashedPassword, firstName, lastName, roleMap['admin'], orgId]
+                [adminEmail, hashedPassword, firstName, lastName, roleMap['admin'], tenantId]
             );
 
-            return { orgId, userId: userResult.rows[0].id };
+            return { tenantId, userId: userResult.rows[0].id };
         });
 
         res.status(201).json({
@@ -68,14 +68,14 @@ export const registerOrganization = async (req, res) => {
  */
 export const updateOnboardingStep = async (req, res) => {
     const { step, completed } = req.body;
-    const orgId = req.user.orgId;
+    const tenantId = req.user.tenantId;
 
     try {
         await query(
             `UPDATE organizations 
              SET onboarding_metadata = onboarding_metadata || $1::jsonb
              WHERE id = $2`,
-            [JSON.stringify({ [step]: completed, step }), orgId]
+            [JSON.stringify({ [step]: completed, step }), tenantId]
         );
 
         res.json({ success: true, message: `Onboarding step '${step}' updated.` });

@@ -15,7 +15,7 @@ export const createTenant = async (req, res) => {
                 'INSERT INTO organizations (name, slug) VALUES ($1, $2) RETURNING id',
                 [name, slug]
             );
-            const orgId = orgResult.rows[0].id;
+            const tenantId = orgResult.rows[0].id;
 
             // 2. Seed Default Roles for this Tenant
             // (In a real system, these would be in a separate template table)
@@ -24,8 +24,8 @@ export const createTenant = async (req, res) => {
 
             for (const roleName of roles) {
                 const roleResult = await client.query(
-                    'INSERT INTO roles (name, organization_id) VALUES ($1, $2) RETURNING id',
-                    [roleName, orgId]
+                    'INSERT INTO roles (name, tenant_id) VALUES ($1, $2) RETURNING id',
+                    [roleName, tenantId]
                 );
                 roleMap[roleName] = roleResult.rows[0].id;
             }
@@ -33,12 +33,12 @@ export const createTenant = async (req, res) => {
             // 3. Create Tenant Admin
             const hashedPassword = await bcrypt.hash(adminPassword, 12);
             await client.query(
-                `INSERT INTO users (email, password_hash, first_name, last_name, role_id, organization_id) 
+                `INSERT INTO users (email, password_hash, first_name, last_name, role_id, tenant_id) 
          VALUES ($1, $2, $3, $4, $5, $6)`,
-                [adminEmail, hashedPassword, firstName, lastName, roleMap['admin'], orgId]
+                [adminEmail, hashedPassword, firstName, lastName, roleMap['admin'], tenantId]
             );
 
-            return { orgId, slug };
+            return { tenantId, slug };
         });
 
         res.status(201).json({

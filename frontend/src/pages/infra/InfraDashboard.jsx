@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Globe, Users, Activity, AlertTriangle, CheckCircle, Search, MoreVertical, Ban, RefreshCw, Trash2 } from 'lucide-react';
 import api from '../../utils/api'; // Assuming we use same api util but it handles relative /api
 
-const PlatformDashboard = () => {
+const InfraDashboard = () => {
     const [tenants, setTenants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [metrics, setMetrics] = useState({ total: 0, active: 0, suspended: 0 });
@@ -167,4 +167,4 @@ const PlatformDashboard = () => {
     );
 };
 
-export default PlatformDashboard;
+export default InfraDashboard;

@@ -4,11 +4,11 @@ import { query } from '../db/connection.js';
  * Feature Flag Service
  * Checks if a specific organization has a feature enabled.
  */
-export const isFeatureEnabled = async (orgId, featureKey) => {
+export const isFeatureEnabled = async (tenantId, featureKey) => {
     try {
         const result = await query(
-            'SELECT enabled FROM organization_features WHERE organization_id = $1 AND feature_key = $2',
-            [orgId, featureKey]
+            'SELECT enabled FROM organization_features WHERE tenant_id = $1 AND feature_key = $2',
+            [tenantId, featureKey]
         );
 
         if (result.rows.length === 0) {
@@ -28,10 +28,10 @@ export const isFeatureEnabled = async (orgId, featureKey) => {
  */
 export const requireFeature = (featureKey) => {
     return async (req, res, next) => {
-        const orgId = req.tenantId || req.user?.orgId;
-        if (!orgId) return res.status(403).json({ success: false, message: 'Organization context required.' });
+        const tenantId = req.tenantId || req.user?.tenantId;
+        if (!tenantId) return res.status(403).json({ success: false, message: 'Organization context required.' });
 
-        const enabled = await isFeatureEnabled(orgId, featureKey);
+        const enabled = await isFeatureEnabled(tenantId, featureKey);
         if (!enabled) {
             return res.status(403).json({
                 success: false,

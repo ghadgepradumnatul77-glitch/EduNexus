@@ -7,16 +7,16 @@ import { query } from '../db/connection.js';
  */
 export const requireActiveTenant = async (req, res, next) => {
     // If no context, continue (e.g. public platform routes or health checks)
-    if (!req.tenantId && !req.user?.orgId) {
+    if (!req.tenantId && !req.user?.tenantId) {
         return next();
     }
 
-    const orgId = req.tenantId || req.user.orgId;
+    const tenantId = req.tenantId || req.user.tenantId;
 
     try {
         const result = await query(
             'SELECT status, suspension_reason FROM organizations WHERE id = $1',
-            [orgId]
+            [tenantId]
         );
 
         if (result.rows.length === 0) {

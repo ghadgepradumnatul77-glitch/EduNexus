@@ -61,7 +61,7 @@ export const orgLimiter = createLimiter({
     windowMs: 15 * 60 * 1000,
     max: 2000,
     keyPrefix: 'org',
-    identifierFn: (req) => req.tenantId || req.user?.orgId
+    identifierFn: (req) => req.tenantId || req.user?.tenantId
 });
 
 // Specialized Strict Limiter for Auth/Sensistive routes

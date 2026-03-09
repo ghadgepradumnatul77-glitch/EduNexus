@@ -4,8 +4,8 @@ import redis from '../utils/redis.js';
 /**
  * Get Tenant Tier Information (Cached)
  */
-const getTenantTierInfo = async (orgId) => {
-    const cacheKey = `tenant:${orgId}:tier_info`;
+const getTenantTierInfo = async (tenantId) => {
+    const cacheKey = `tenant:${tenantId}:tier_info`;
     const cached = await redis.get(cacheKey);
 
     if (cached) return JSON.parse(cached);
@@ -15,7 +15,7 @@ const getTenantTierInfo = async (orgId) => {
      FROM organizations o
      JOIN subscription_plans p ON o.subscription_tier = p.name
      WHERE o.id = $1`,
-        [orgId]
+        [tenantId]
     );
 
     if (result.rows.length === 0) return null;
@@ -85,7 +85,7 @@ export const checkQuota = (metricKey) => {
 
             // Get current usage (from organization_usage summary table)
             const usageResult = await query(
-                `SELECT current_user_count, current_storage_bytes FROM organization_usage WHERE organization_id = $1`,
+                `SELECT current_user_count, current_storage_bytes FROM organization_usage WHERE tenant_id = $1`,
                 [req.tenantId]
             );
 

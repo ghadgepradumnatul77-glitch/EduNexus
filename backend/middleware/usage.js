@@ -5,11 +5,11 @@ import { usageQueue } from '../queues/queueManager.js';
  * Asynchronously logs tenant API calls for billing and resource monitoring.
  */
 export const trackUsage = async (req, res, next) => {
-    const orgId = req.tenantId || req.user?.orgId;
+    const tenantId = req.tenantId || req.user?.tenantId;
 
-    if (orgId) {
+    if (tenantId) {
         // Queue the usage metric - don't wait for it
-        usageQueue.add('track', { orgId, type: 'api_call' }, {
+        usageQueue.add('track', { tenantId, type: 'api_call' }, {
             removeOnComplete: true,
             attempts: 1
         }).catch(err => console.error('Usage queue error:', err));

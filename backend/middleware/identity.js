@@ -17,7 +17,7 @@ export const resolveTenantIdentity = async (req, res, next) => {
                 const cached = await redis.get(cacheKey);
                 if (cached) {
                     const data = JSON.parse(cached);
-                    req.tenantId = data.organization_id;
+                    req.tenantId = data.tenant_id;
                     req.tenantSlug = data.slug;
                     return next();
                 }
@@ -48,7 +48,7 @@ export const resolveTenantIdentity = async (req, res, next) => {
                 // Attempt to cache
                 if (redis.status === 'ready') {
                     const cacheKey = `identity:resolve:${host}`;
-                    await redis.set(cacheKey, JSON.stringify({ organization_id: org.id, slug: org.slug }), 'EX', 3600)
+                    await redis.set(cacheKey, JSON.stringify({ tenant_id: org.id, slug: org.slug }), 'EX', 3600)
                         .catch(e => console.error('Redis cache set error:', e.message));
                 }
                 return next();
@@ -57,21 +57,21 @@ export const resolveTenantIdentity = async (req, res, next) => {
 
         // 4. Custom Domain Lookup
         const domainResult = await platformQuery(
-            `SELECT d.organization_id, o.slug 
+            `SELECT d.tenant_id, o.slug 
              FROM organization_domains d
-             JOIN organizations o ON d.organization_id = o.id
+             JOIN organizations o ON d.tenant_id = o.id
              WHERE d.domain = $1 AND d.is_verified = TRUE AND o.status = 'active'`,
             [host]
         );
 
         if (domainResult.rows.length > 0) {
             const org = domainResult.rows[0];
-            req.tenantId = org.organization_id;
+            req.tenantId = org.tenant_id;
             req.tenantSlug = org.slug;
 
             if (redis.status === 'ready') {
                 const cacheKey = `identity:resolve:${host}`;
-                await redis.set(cacheKey, JSON.stringify({ organization_id: org.organization_id, slug: org.slug }), 'EX', 3600)
+                await redis.set(cacheKey, JSON.stringify({ tenant_id: org.tenant_id, slug: org.slug }), 'EX', 3600)
                     .catch(e => console.error('Redis cache set error:', e.message));
             }
             return next();

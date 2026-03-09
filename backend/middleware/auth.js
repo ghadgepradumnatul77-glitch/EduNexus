@@ -5,7 +5,7 @@ import { query, platformQuery } from '../db/connection.js';
 export const verifyToken = async (req, res, next) => {
     try {
         // Strictly retrieve token from HTTP-only cookie
-        const token = req.cookies?.accessToken;
+        const token = req.cookies?.app_session_token;
 
         if (!token) {
             return res.status(401).json({
@@ -19,7 +19,7 @@ export const verifyToken = async (req, res, next) => {
 
         // Get user from database (Identity lookup must bypass RLS to find the tenant)
         const result = await platformQuery(
-            `SELECT u.id, u.email, u.first_name, u.last_name, u.organization_id, u.is_deleted, r.name as role
+            `SELECT u.id, u.email, u.first_name, u.last_name, u.tenant_id, u.is_deleted, r.name as role
         FROM users u
         JOIN roles r ON u.role_id = r.id
         WHERE u.id = $1 AND u.is_deleted = FALSE`,
@@ -40,7 +40,7 @@ export const verifyToken = async (req, res, next) => {
             firstName: result.rows[0].first_name,
             lastName: result.rows[0].last_name,
             role: result.rows[0].role,
-            orgId: result.rows[0].organization_id
+            tenantId: result.rows[0].tenant_id
         };
 
         next();
@@ -91,14 +91,14 @@ export const optionalAuth = async (req, res, next) => {
     try {
         let token = req.headers.authorization?.split(' ')[1];
 
-        if (!token && req.cookies?.accessToken) {
-            token = req.cookies.accessToken;
+        if (!token && req.cookies?.app_session_token) {
+            token = req.cookies.app_session_token;
         }
 
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
             const result = await platformQuery(
-                `SELECT u.id, u.email, u.first_name, u.last_name, u.organization_id, r.name as role
+                `SELECT u.id, u.email, u.first_name, u.last_name, u.tenant_id, r.name as role
          FROM users u
          JOIN roles r ON u.role_id = r.id
          WHERE u.id = $1 AND u.is_deleted = FALSE`,
@@ -129,7 +129,7 @@ export const optionalAuth = async (req, res, next) => {
  */
 export const requirePlatformAdmin = async (req, res, next) => {
     try {
-        const token = req.cookies?.platformAccessToken;
+        const token = req.cookies?.infra_session_token;
         if (!token) {
             return res.status(401).json({ success: false, message: 'Platform access required. Please login.' });
         }

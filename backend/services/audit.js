@@ -17,7 +17,7 @@ export const logAudit = async (req, {
         const logData = {
             actor_id: req.platformAdmin?.id || req.user?.id || null,
             actor_role: req.platformAdmin ? 'PLATFORM_ADMIN' : req.user?.role || null,
-            organization_id: req.tenantId || req.user?.orgId || null,
+            tenant_id: req.tenantId || req.user?.tenantId || null,
             action_type: action,
             entity_type: entityType,
             entity_id: entityId,

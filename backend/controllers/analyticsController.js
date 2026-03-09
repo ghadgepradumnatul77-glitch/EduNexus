@@ -7,11 +7,11 @@ export const getAttendanceTrends = async (req, res) => {
                     COUNT(*) FILTER (WHERE status = 'present') as present,
                     COUNT(*) FILTER (WHERE status = 'absent') as absent
              FROM attendance
-             WHERE organization_id = $1
+             WHERE tenant_id = $1
              GROUP BY date
              ORDER BY date DESC
              LIMIT 14`,
-            [req.user.orgId]
+            [req.user.tenantId]
         );
         res.json({ success: true, data: result.rows.reverse() });
     } catch (error) {
@@ -24,9 +24,9 @@ export const getMarksTrends = async (req, res) => {
         const result = await query(
             `SELECT exam_type, AVG(marks_obtained / max_marks * 100) as average_marks
              FROM marks
-             WHERE organization_id = $1
+             WHERE tenant_id = $1
              GROUP BY exam_type`,
-            [req.user.orgId]
+            [req.user.tenantId]
         );
         res.json({ success: true, data: result.rows });
     } catch (error) {

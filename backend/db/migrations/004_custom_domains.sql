@@ -3,7 +3,7 @@
 -- 1. Create Organization Domains Table
 CREATE TABLE IF NOT EXISTS organization_domains (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     domain VARCHAR(255) UNIQUE NOT NULL,
     is_verified BOOLEAN DEFAULT FALSE,
     dns_verification_token VARCHAR(255),

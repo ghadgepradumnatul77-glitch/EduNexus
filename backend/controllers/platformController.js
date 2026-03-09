@@ -35,7 +35,7 @@ export const platformLogin = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid credentials.' });
         }
 
-        const accessToken = jwt.sign(
+        const app_session_token = jwt.sign(
             { adminId: admin.id, type: 'platform' },
             process.env.PLATFORM_JWT_SECRET,
             { expiresIn: '1h' }
@@ -43,7 +43,7 @@ export const platformLogin = async (req, res) => {
 
         console.log(`[PLATFORM-AUTH] Login successful for: ${email}. Building session.`);
 
-        res.cookie('platformAccessToken', accessToken, {
+        res.cookie('infra_session_token', app_session_token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'Strict',

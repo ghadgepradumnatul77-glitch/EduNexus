@@ -61,7 +61,7 @@ export const getTenantRankings = async (req, res) => {
         const result = await query(`
             SELECT o.name, o.slug, o.subscription_tier, u.current_user_count
             FROM organizations o
-            JOIN organization_usage u ON o.id = u.organization_id
+            JOIN organization_usage u ON o.id = u.tenant_id
             ORDER BY u.current_user_count DESC
             LIMIT 10
         `);
@@ -99,7 +99,7 @@ export const getBetaInsights = async (req, res) => {
         const ahaResult = await query(`
             SELECT o.name, e.event_key, e.created_at
             FROM product_events e
-            JOIN organizations o ON e.organization_id = o.id
+            JOIN organizations o ON e.tenant_id = o.id
             WHERE e.event_type = 'milestone'
             ORDER BY e.created_at DESC
             LIMIT 5
@@ -140,7 +140,7 @@ export const getDashboardSummary = async (req, res) => {
                 COUNT(CASE WHEN status = 'active' THEN 1 ELSE 0 END)::INT as active_beta_programs,
                 ROUND(AVG(bf.nps_score), 1) as avg_beta_nps
             FROM beta_programs bp
-            LEFT JOIN beta_feedback bf ON bf.organization_id = bp.organization_id
+            LEFT JOIN beta_feedback bf ON bf.tenant_id = bp.tenant_id
         `);
 
         // 3. System Stats

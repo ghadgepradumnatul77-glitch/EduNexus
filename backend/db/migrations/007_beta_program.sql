@@ -6,7 +6,7 @@
 -- Beta Programs: tracks each institution enrolled in the beta cohort
 CREATE TABLE IF NOT EXISTS beta_programs (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     cohort          VARCHAR(50)  NOT NULL DEFAULT '2026-Q1',
     status          VARCHAR(30)  NOT NULL DEFAULT 'active'
                         CHECK (status IN ('active', 'churned', 'converted', 'paused')),
@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS beta_programs (
     notes           TEXT,
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    UNIQUE (organization_id)
+    UNIQUE (tenant_id)
 );
 
 -- Weekly check-in / feedback submissions from institutional admins
 CREATE TABLE IF NOT EXISTS beta_feedback (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     submitted_by    UUID REFERENCES users(id) ON DELETE SET NULL,
     week_number     INT  NOT NULL,
     year            INT  NOT NULL DEFAULT EXTRACT(YEAR FROM NOW()),
@@ -35,13 +35,13 @@ CREATE TABLE IF NOT EXISTS beta_feedback (
     would_pay       BOOLEAN DEFAULT FALSE,
     willing_to_refer BOOLEAN DEFAULT FALSE,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    UNIQUE (organization_id, week_number, year)
+    UNIQUE (tenant_id, week_number, year)
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_beta_programs_org ON beta_programs(organization_id);
+CREATE INDEX IF NOT EXISTS idx_beta_programs_org ON beta_programs(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_beta_programs_status ON beta_programs(status);
-CREATE INDEX IF NOT EXISTS idx_beta_feedback_org ON beta_feedback(organization_id);
+CREATE INDEX IF NOT EXISTS idx_beta_feedback_org ON beta_feedback(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_beta_feedback_week ON beta_feedback(year, week_number);
 
 -- Auto-update updated_at

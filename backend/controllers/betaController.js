@@ -8,25 +8,25 @@ import { query } from '../db/connection.js';
  */
 export const createBetaProgram = async (req, res, next) => {
     try {
-        const { organization_id, cohort, contact_name, contact_email, ends_at, notes } = req.body;
+        const { tenant_id, cohort, contact_name, contact_email, ends_at, notes } = req.body;
 
-        if (!organization_id) {
-            return res.status(400).json({ success: false, message: 'organization_id is required' });
+        if (!tenant_id) {
+            return res.status(400).json({ success: false, message: 'tenant_id is required' });
         }
 
         // Verify org exists
-        const orgCheck = await query('SELECT id, name, slug FROM organizations WHERE id = $1', [organization_id]);
+        const orgCheck = await query('SELECT id, name, slug FROM organizations WHERE id = $1', [tenant_id]);
         if (orgCheck.rows.length === 0) {
             return res.status(404).json({ success: false, message: 'Organization not found' });
         }
 
         const result = await query(
             `INSERT INTO beta_programs
-                (organization_id, cohort, contact_name, contact_email, ends_at, notes)
+                (tenant_id, cohort, contact_name, contact_email, ends_at, notes)
              VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING *`,
             [
-                organization_id,
+                tenant_id,
                 cohort || '2026-Q1',
                 contact_name || null,
                 contact_email || null,
@@ -63,10 +63,10 @@ export const listBetaPrograms = async (req, res, next) => {
                 COUNT(DISTINCT bf.id)::INT        AS feedback_count,
                 ROUND(AVG(bf.nps_score), 1)       AS avg_nps,
                 ROUND(AVG(bf.overall_rating), 1)  AS avg_rating,
-                (SELECT COUNT(*) FROM users u WHERE u.organization_id = bp.organization_id)::INT AS user_count
+                (SELECT COUNT(*) FROM users u WHERE u.tenant_id = bp.tenant_id)::INT AS user_count
              FROM beta_programs bp
-             JOIN organizations o ON o.id = bp.organization_id
-             LEFT JOIN beta_feedback bf ON bf.organization_id = bp.organization_id
+             JOIN organizations o ON o.id = bp.tenant_id
+             LEFT JOIN beta_feedback bf ON bf.tenant_id = bp.tenant_id
              GROUP BY bp.id, o.name, o.slug, o.plan
              ORDER BY bp.enrolled_at DESC`,
             []
@@ -122,17 +122,17 @@ export const submitFeedback = async (req, res, next) => {
             would_pay, willing_to_refer
         } = req.body;
 
-        const orgId = req.tenant?.organizationId;
+        const tenantId = req.tenant?.organizationId;
         const userId = req.user?.id;
 
-        if (!orgId) {
+        if (!tenantId) {
             return res.status(403).json({ success: false, message: 'Tenant context required' });
         }
 
         // Check they are in the beta program
         const betaCheck = await query(
-            'SELECT id FROM beta_programs WHERE organization_id = $1 AND status = $2',
-            [orgId, 'active']
+            'SELECT id FROM beta_programs WHERE tenant_id = $1 AND status = $2',
+            [tenantId, 'active']
         );
         if (betaCheck.rows.length === 0) {
             return res.status(403).json({ success: false, message: 'Your organisation is not enrolled in the active beta program' });
@@ -144,10 +144,10 @@ export const submitFeedback = async (req, res, next) => {
 
         const result = await query(
             `INSERT INTO beta_feedback
-                (organization_id, submitted_by, week_number, year, nps_score, overall_rating,
+                (tenant_id, submitted_by, week_number, year, nps_score, overall_rating,
                  friction_points, feature_requests, positive_highlights, would_pay, willing_to_refer)
              VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-             ON CONFLICT (organization_id, week_number, year)
+             ON CONFLICT (tenant_id, week_number, year)
              DO UPDATE SET
                 nps_score           = EXCLUDED.nps_score,
                 overall_rating      = EXCLUDED.overall_rating,
@@ -158,7 +158,7 @@ export const submitFeedback = async (req, res, next) => {
                 willing_to_refer    = EXCLUDED.willing_to_refer
              RETURNING *`,
             [
-                orgId, userId, weekNumber, year,
+                tenantId, userId, weekNumber, year,
                 nps_score ?? null, overall_rating ?? null,
                 friction_points || null, feature_requests || null,
                 positive_highlights || null,
@@ -183,15 +183,15 @@ export const submitFeedback = async (req, res, next) => {
 export const getFeedbackHistory = async (req, res, next) => {
     try {
         const isSuperAdmin = req.user?.role === 'Super Admin';
-        const orgId = isSuperAdmin
+        const tenantId = isSuperAdmin
             ? (req.query.org_id || null)
             : req.tenant?.organizationId;
 
         const params = [];
         let where = '';
-        if (orgId) {
-            params.push(orgId);
-            where = `WHERE bf.organization_id = $${params.length}`;
+        if (tenantId) {
+            params.push(tenantId);
+            where = `WHERE bf.tenant_id = $${params.length}`;
         }
 
         const result = await query(
@@ -201,7 +201,7 @@ export const getFeedbackHistory = async (req, res, next) => {
                 o.slug   AS org_slug,
                 u.first_name || ' ' || u.last_name AS submitted_by_name
              FROM beta_feedback bf
-             JOIN organizations o ON o.id = bf.organization_id
+             JOIN organizations o ON o.id = bf.tenant_id
              LEFT JOIN users u ON u.id = bf.submitted_by
              ${where}
              ORDER BY bf.year DESC, bf.week_number DESC

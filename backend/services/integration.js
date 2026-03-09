@@ -6,12 +6,12 @@ import crypto from 'crypto';
  * Enterprise Webhook Dispatcher
  * Sends secure, signed events to tenant-defined URLs.
  */
-export const dispatchWebhook = async (orgId, eventType, payload) => {
+export const dispatchWebhook = async (tenantId, eventType, payload) => {
     try {
         // 1. Get webhook configuration for this organization
         const result = await query(
-            'SELECT url, secret FROM organization_webhooks WHERE organization_id = $1 AND enabled = TRUE AND event_types @> $2',
-            [orgId, JSON.stringify([eventType])]
+            'SELECT url, secret FROM organization_webhooks WHERE tenant_id = $1 AND enabled = TRUE AND event_types @> $2',
+            [tenantId, JSON.stringify([eventType])]
         );
 
         for (const webhook of result.rows) {

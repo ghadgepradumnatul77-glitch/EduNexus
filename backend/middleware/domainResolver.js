@@ -22,9 +22,9 @@ export const resolveCustomDomain = async (req, res, next) => {
 
         if (!orgData) {
             const result = await query(
-                `SELECT d.organization_id, o.status 
+                `SELECT d.tenant_id, o.status 
          FROM organization_domains d
-         JOIN organizations o ON d.organization_id = o.id
+         JOIN organizations o ON d.tenant_id = o.id
          WHERE d.domain = $1 AND d.is_verified = TRUE`,
                 [host]
             );
@@ -46,7 +46,7 @@ export const resolveCustomDomain = async (req, res, next) => {
             });
         }
 
-        req.tenantId = org.organization_id;
+        req.tenantId = org.tenant_id;
         next();
     } catch (error) {
         console.error('Custom domain resolution error:', error);

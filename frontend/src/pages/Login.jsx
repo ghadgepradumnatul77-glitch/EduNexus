@@ -168,26 +168,7 @@ const Login = () => {
                             <p className="text-text-muted font-bold text-sm tracking-widest text-center lg:text-left uppercase">Academic Management Ecosystem</p>
                         </header>
 
-                        {/* Segmented Role Toggle */}
-                        <div className="relative flex p-2 bg-surface-main rounded-[2rem] mb-12 border border-edu-border shadow-inner overflow-hidden">
-                            {roles.map((r) => (
-                                <button
-                                    key={r.id}
-                                    onClick={() => setRole(r.id)}
-                                    className={`relative z-10 flex-1 flex items-center justify-center py-4 space-x-3 transition-colors duration-500 rounded-2xl ${role === r.id ? 'text-text-primary' : 'text-text-muted hover:text-text-secondary'}`}
-                                >
-                                    {role === r.id && (
-                                        <motion.div
-                                            layoutId="roleIndicator"
-                                            className="absolute inset-0 bg-surface-card shadow-premium rounded-2xl z-[-1]"
-                                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                        />
-                                    )}
-                                    <r.icon className={`w-4 h-4 ${role === r.id ? 'text-[#C8A951]' : ''}`} />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">{r.id} Access</span>
-                                </button>
-                            ))}
-                        </div>
+
 
                         <form onSubmit={handleSubmit} className="space-y-10">
                             <AnimatePresence mode="wait">
@@ -267,6 +248,17 @@ const Login = () => {
                                 )}
                             </motion.button>
                         </form>
+
+                        {/* Operator Login Link */}
+                        <div className="mt-8 text-center border-t border-edu-border pt-6">
+                            <p className="text-[10px] font-black uppercase text-text-muted tracking-widest mb-3">
+                                Need platform operator access?
+                            </p>
+                            <Link to="/infra/login" className="inline-flex items-center gap-2 text-xs font-black text-[#0B1F3A] hover:text-[#C8A951] transition-colors group">
+                                <Shield className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                Operator Login
+                            </Link>
+                        </div>
 
                         {/* Security Trust Signals */}
                         <div className="mt-12 p-5 bg-[#F8FAFC] rounded-2xl border border-slate-100 flex items-center justify-between">

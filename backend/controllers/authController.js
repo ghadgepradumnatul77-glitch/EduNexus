@@ -9,19 +9,19 @@ const MAX_LOGIN_ATTEMPTS = parseInt(process.env.MAX_LOGIN_ATTEMPTS) || 5;
 const ACCOUNT_LOCK_DURATION = 5 * 60 * 1000; // 5 minutes (Requested)
 
 const generateTokens = (userId) => {
-    const accessToken = jwt.sign(
+    const app_session_token = jwt.sign(
         { userId, version: '2' },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: '15m' }
     );
 
-    const refreshToken = jwt.sign(
+    const app_refresh_token = jwt.sign(
         { userId, jti: crypto.randomBytes(16).toString('hex') },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: '7d' }
     );
 
-    return { accessToken, refreshToken };
+    return { app_session_token, app_refresh_token };
 };
 
 const hashToken = (token) => {
@@ -48,7 +48,7 @@ export const login = async (req, res) => {
 
         const userResult = await platformQuery(
             `SELECT u.id, u.email, u.password_hash, u.first_name, u.last_name, 
-                    u.failed_attempts, u.locked_until, u.is_deleted, u.organization_id,
+                    u.failed_attempts, u.locked_until, u.is_deleted, u.tenant_id,
                     r.name as role
              FROM users u
              JOIN roles r ON u.role_id = r.id
@@ -66,9 +66,9 @@ export const login = async (req, res) => {
         // 1. Tenant Suspension Check (Platform Level)
         const orgResult = await platformQuery(
             'SELECT status, suspension_reason FROM organizations WHERE id = $1',
-            [user.organization_id]
+            [user.tenant_id]
         );
-        console.log(`[AUTH] Checking organization status for ID: ${user.organization_id}`);
+        console.log(`[AUTH] Checking organization status for ID: ${user.tenant_id}`);
         if (orgResult.rows[0]?.status === 'suspended') {
             return res.status(403).json({
                 success: false,
@@ -120,23 +120,23 @@ export const login = async (req, res) => {
         );
 
         console.log(`[AUTH] Login successful for: ${email}. Generating tokens.`);
-        const { accessToken, refreshToken } = generateTokens(user.id);
-        const tokenHash = hashToken(refreshToken);
+        const { app_session_token, app_refresh_token } = generateTokens(user.id);
+        const tokenHash = hashToken(app_refresh_token);
         const familyId = crypto.randomUUID();
 
         await platformQuery(
-            'INSERT INTO refresh_tokens (user_id, family_id, token_hash, expires_at, ip_address, user_agent, organization_id) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-            [user.id, familyId, tokenHash, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), ipAddress, req.get('user-agent'), user.organization_id]
+            'INSERT INTO refresh_tokens (user_id, family_id, token_hash, expires_at, ip_address, user_agent, tenant_id) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [user.id, familyId, tokenHash, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), ipAddress, req.get('user-agent'), user.tenant_id]
         );
 
-        res.cookie('accessToken', accessToken, {
+        res.cookie('app_session_token', app_session_token, {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? 'None' : 'Strict',
             maxAge: 15 * 60 * 1000
         });
 
-        res.cookie('refreshToken', refreshToken, {
+        res.cookie('app_refresh_token', app_refresh_token, {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? 'None' : 'Strict',
@@ -148,7 +148,7 @@ export const login = async (req, res) => {
         res.json({
             success: true,
             data: {
-                user: { id: user.id, email: user.email, firstName: user.first_name, role: user.role, orgId: user.organization_id }
+                user: { id: user.id, email: user.email, firstName: user.first_name, role: user.role, tenantId: user.tenant_id }
             }
         });
     } catch (error) {
@@ -157,8 +157,8 @@ export const login = async (req, res) => {
     }
 };
 
-export const refreshToken = async (req, res) => {
-    const oldRefreshToken = req.cookies.refreshToken;
+export const app_refresh_token = async (req, res) => {
+    const oldRefreshToken = req.cookies.app_refresh_token;
     if (!oldRefreshToken) return res.status(401).json({ success: false, message: 'No refresh token.' });
 
     try {
@@ -175,7 +175,7 @@ export const refreshToken = async (req, res) => {
         // 1. Tenant Suspension Check (Platform Level)
         const orgResult = await platformQuery(
             'SELECT status, suspension_reason FROM organizations WHERE id = $1',
-            [storedToken.organization_id]
+            [storedToken.tenant_id]
         );
         if (orgResult.rows[0]?.status === 'suspended') {
             return res.status(403).json({
@@ -201,24 +201,24 @@ export const refreshToken = async (req, res) => {
         // Rotate
         await platformQuery('UPDATE refresh_tokens SET revoked = TRUE, replaced_by_token_id = $1 WHERE id = $2', [storedToken.id, storedToken.id]);
 
-        const { accessToken, refreshToken: newRefreshToken } = generateTokens(decoded.userId);
+        const { app_session_token, app_refresh_token: newRefreshToken } = generateTokens(decoded.userId);
         const newTokenHash = hashToken(newRefreshToken);
 
         const insertResult = await platformQuery(
-            'INSERT INTO refresh_tokens (user_id, family_id, token_hash, expires_at, ip_address, user_agent, organization_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-            [decoded.userId, storedToken.family_id, newTokenHash, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), req.ip, req.get('user-agent'), storedToken.organization_id]
+            'INSERT INTO refresh_tokens (user_id, family_id, token_hash, expires_at, ip_address, user_agent, tenant_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+            [decoded.userId, storedToken.family_id, newTokenHash, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), req.ip, req.get('user-agent'), storedToken.tenant_id]
         );
 
         await platformQuery('UPDATE refresh_tokens SET replaced_by_token_id = $1 WHERE id = $2', [insertResult.rows[0].id, storedToken.id]);
 
-        res.cookie('accessToken', accessToken, {
+        res.cookie('app_session_token', app_session_token, {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? 'None' : 'Strict',
             maxAge: 15 * 60 * 1000
         });
 
-        res.cookie('refreshToken', newRefreshToken, {
+        res.cookie('app_refresh_token', newRefreshToken, {
             httpOnly: true,
             secure: isProduction,
             sameSite: isProduction ? 'None' : 'Strict',
@@ -234,21 +234,21 @@ export const refreshToken = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-    const token = req.cookies.refreshToken;
+    const token = req.cookies.app_refresh_token;
     if (token) {
         const tokenHash = hashToken(token);
         await platformQuery('UPDATE refresh_tokens SET revoked = TRUE WHERE token_hash = $1', [tokenHash]);
     }
 
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
+    res.clearCookie('app_session_token');
+    res.clearCookie('app_refresh_token');
     res.json({ success: true, message: 'Logged out.' });
 };
 
 export const getCurrentUser = async (req, res) => {
     try {
         const result = await platformQuery(
-            `SELECT u.id, u.email, u.first_name, u.last_name, r.name as role, u.organization_id as "orgId"
+            `SELECT u.id, u.email, u.first_name, u.last_name, r.name as role, u.tenant_id as "tenantId"
              FROM users u
              JOIN roles r ON u.role_id = r.id
              WHERE u.id = $1 AND u.is_deleted = FALSE`,

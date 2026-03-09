@@ -23,16 +23,16 @@ ALTER TABLE organizations ADD COLUMN IF NOT EXISTS trial_end TIMESTAMP;
 -- Uses Partitioning by recorded_at for performance in large systems
 CREATE TABLE IF NOT EXISTS tenant_usage_metrics (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID NOT NULL REFERENCES organizations(id),
+    tenant_id UUID NOT NULL REFERENCES organizations(id),
     metric_key VARCHAR(100) NOT NULL, -- 'active_users', 'storage_bytes', 'api_calls'
     value BIGINT DEFAULT 0,
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-CREATE INDEX IF NOT EXISTS idx_metrics_org_recorded ON tenant_usage_metrics(organization_id, recorded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_metrics_org_recorded ON tenant_usage_metrics(tenant_id, recorded_at DESC);
 
 -- 4. Create Organization Usage Summary Table (for quick checks)
 CREATE TABLE IF NOT EXISTS organization_usage (
-    organization_id UUID PRIMARY KEY REFERENCES organizations(id),
+    tenant_id UUID PRIMARY KEY REFERENCES organizations(id),
     current_user_count INTEGER DEFAULT 0,
     current_storage_bytes BIGINT DEFAULT 0,
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP

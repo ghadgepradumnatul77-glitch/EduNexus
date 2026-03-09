@@ -59,7 +59,7 @@ const TimelineItem = memo(({ icon: Icon, title, desc, time, color, bgColor }) =>
     </div>
 ));
 
-const Dashboard = () => {
+const StudentDashboard = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [stats, setStats] = useState(null);
@@ -379,4 +379,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default StudentDashboard;

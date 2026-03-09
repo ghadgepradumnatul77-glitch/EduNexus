@@ -25,17 +25,39 @@ import {
 } from 'lucide-react';
 import { BRAND_CONFIG } from '../config/brand';
 
-const NAV_ITEMS = [
-    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['Admin', 'Faculty', 'Student'] },
-    { label: 'Notice Board', path: '/notice-board', icon: Megaphone, roles: ['Admin', 'Faculty', 'Student'] },
-    { label: 'Academic Hub', path: '/academic-hub', icon: BookOpen, roles: ['Admin', 'Faculty', 'Student'] },
-    { label: 'Attendance', path: '/attendance', icon: ClipboardCheck, roles: ['Admin', 'Faculty', 'Student'] },
-    { label: 'Marks', path: '/marks', icon: BarChart3, roles: ['Admin', 'Faculty', 'Student'] },
-    { label: 'Skill Exchange', path: '/skills', icon: Handshake, roles: ['Admin', 'Faculty', 'Student'] },
-    { label: 'Lost & Found', path: '/lost-found', icon: PackageSearch, roles: ['Admin', 'Faculty', 'Student'] },
-    { label: 'Users', path: '/users', icon: Users, roles: ['Admin', 'Super Admin'] },
-    { label: 'Admin Panel', path: '/admin', icon: Settings, roles: ['Super Admin'] },
-    { label: 'Beta Feedback', path: '/beta-feedback', icon: MessageSquare, roles: ['Admin', 'Super Admin'] },
+const NAV_GROUPS = [
+    {
+        name: 'Dashboard',
+        items: [
+            { label: 'Overview', path: '/app/student-dashboard', icon: LayoutDashboard, roles: ['Student'] },
+            { label: 'Overview', path: '/app/faculty-dashboard', icon: LayoutDashboard, roles: ['Faculty'] },
+            { label: 'Overview', path: '/app/admin-dashboard', icon: LayoutDashboard, roles: ['Admin', 'Super Admin'] },
+        ]
+    },
+    {
+        name: 'Academics',
+        items: [
+            { label: 'Academic Hub', path: '/app/academic-hub', icon: BookOpen, roles: ['Admin', 'Faculty', 'Student'] },
+            { label: 'Attendance', path: '/app/attendance', icon: ClipboardCheck, roles: ['Admin', 'Faculty', 'Student'] },
+            { label: 'Marks', path: '/app/marks', icon: BarChart3, roles: ['Admin', 'Faculty', 'Student'] },
+        ]
+    },
+    {
+        name: 'Campus Life',
+        items: [
+            { label: 'Notice Board', path: '/app/notice-board', icon: Megaphone, roles: ['Admin', 'Faculty', 'Student'] },
+            { label: 'Skill Exchange', path: '/app/skills', icon: Handshake, roles: ['Admin', 'Faculty', 'Student'] },
+            { label: 'Lost & Found', path: '/app/lost-found', icon: PackageSearch, roles: ['Admin', 'Faculty', 'Student'] },
+        ]
+    },
+    {
+        name: 'Administration',
+        items: [
+            { label: 'User Directory', path: '/app/users', icon: Users, roles: ['Admin', 'Super Admin'] },
+            { label: 'System Settings', path: '/app/settings', icon: Settings, roles: ['Super Admin', 'Admin'] },
+            { label: 'Beta Feedback', path: '/app/beta-feedback', icon: MessageSquare, roles: ['Admin', 'Super Admin'] },
+        ]
+    }
 ];
 
 const Layout = ({ children }) => {
@@ -66,6 +88,17 @@ const Layout = ({ children }) => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isDark]);
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('command-palette')?.focus();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     const handleLogout = async () => {
         await logout();
         navigate('/login');
@@ -73,7 +106,17 @@ const Layout = ({ children }) => {
 
     const toggleTheme = () => setIsDark(!isDark);
 
-    const visibleNav = NAV_ITEMS.filter(item => item.roles.includes(user?.role));
+    const getVisibleGroups = () => {
+        return NAV_GROUPS.map(group => ({
+            ...group,
+            items: group.items.filter(item => item.roles.includes(user?.role))
+        })).filter(group => group.items.length > 0);
+    };
+
+    const visibleGroups = getVisibleGroups();
+
+    // Flatten for mobile nav
+    const visibleNav = visibleGroups.flatMap(g => g.items);
 
     const sidebarTransition = { duration: 0.25, ease: [0.4, 0, 0.2, 1] };
 
@@ -138,38 +181,45 @@ const Layout = ({ children }) => {
                     </button>
                 )}
 
-                <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
-                    {visibleNav.map((item) => {
-                        const active = location.pathname === item.path;
-                        const Icon = item.icon;
-                        return (
-                            <Link
-                                key={item.path}
-                                title={isCollapsed ? item.label : ''}
-                                to={item.path}
-                                aria-current={active ? 'page' : undefined}
-                                className={`group flex items-center ${isCollapsed ? 'justify-center px-4' : 'px-6'} py-4 rounded-2xl transition-all duration-300 relative
-                                    ${active ? 'bg-text-primary text-surface-main shadow-2xl shadow-primary-500/5' : 'text-text-secondary hover:bg-surface-main hover:text-text-primary'}`}
-                            >
-                                <Icon className={`w-5 h-5 transition-transform duration-300 ${active ? '' : 'group-hover:scale-110'}`} aria-hidden="true" />
-                                {!isCollapsed && (
-                                    <motion.span
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        className="ml-4 font-bold tracking-tight"
-                                    >
-                                        {item.label}
-                                    </motion.span>
-                                )}
-                                {active && !isCollapsed && (
-                                    <motion.div
-                                        layoutId="activePill"
-                                        className="ml-auto w-1.5 h-1.5 rounded-full bg-primary-500"
-                                    />
-                                )}
-                            </Link>
-                        );
-                    })}
+                <nav className="flex-1 px-4 py-4 space-y-6 overflow-y-auto">
+                    {visibleGroups.map((group, groupIdx) => (
+                        <div key={group.name}>
+                            {!isCollapsed && (
+                                <h3 className="px-6 mb-2 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                                    {group.name}
+                                </h3>
+                            )}
+                            <div className="space-y-1">
+                                {group.items.map((item) => {
+                                    // Strip leading '/app' from react-router matching logic if we are nested, but our paths are full absolute paths now
+                                    // Since react-router <Link to> with absolute paths matches location.pathname directly:
+                                    const active = location.pathname.startsWith(item.path);
+                                    const Icon = item.icon;
+                                    return (
+                                        <Link
+                                            key={item.path}
+                                            title={isCollapsed ? item.label : ''}
+                                            to={item.path}
+                                            aria-current={active ? 'page' : undefined}
+                                            className={`group flex items-center ${isCollapsed ? 'justify-center px-4' : 'px-6'} py-3 rounded-2xl transition-all duration-300 relative
+                                                ${active ? 'bg-text-primary text-surface-main shadow-xl shadow-primary-500/10' : 'text-text-secondary hover:bg-surface-main hover:text-text-primary'}`}
+                                        >
+                                            <Icon className={`w-5 h-5 transition-transform duration-300 ${active ? '' : 'group-hover:scale-110'}`} aria-hidden="true" />
+                                            {!isCollapsed && (
+                                                <motion.span
+                                                    initial={{ opacity: 0, x: -10 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    className="ml-4 font-bold tracking-tight text-sm"
+                                                >
+                                                    {item.label}
+                                                </motion.span>
+                                            )}
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
                 </nav>
 
                 <div className={`p-4 space-y-4 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
@@ -230,11 +280,16 @@ const Layout = ({ children }) => {
                         <div className="relative w-full group">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted transition-colors group-focus-within:text-text-primary" aria-hidden="true" />
                             <input
+                                id="command-palette"
                                 type="text"
                                 aria-label="Search dashboard"
-                                placeholder="Search everything..."
-                                className="w-full pl-12 pr-4 py-2.5 bg-surface-card/50 border border-edu-border rounded-2xl outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500/50 transition-all text-sm font-medium text-text-primary"
+                                placeholder="Search everything... (Ctrl + K)"
+                                className="w-full pl-12 pr-12 py-2.5 bg-surface-card/50 border border-edu-border rounded-2xl outline-none focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500/50 transition-all text-sm font-medium text-text-primary shadow-sm"
                             />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1">
+                                <kbd className="px-2 py-1 bg-surface-main border border-edu-border rounded-lg text-[10px] font-black text-text-secondary shadow-sm">Ctrl</kbd>
+                                <kbd className="px-2 py-1 bg-surface-main border border-edu-border rounded-lg text-[10px] font-black text-text-secondary shadow-sm">K</kbd>
+                            </div>
                         </div>
                     </div>
 

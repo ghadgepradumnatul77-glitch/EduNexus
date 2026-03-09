@@ -3,7 +3,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import StudentDashboard from './pages/StudentDashboard';
+import FacultyDashboard from './pages/FacultyDashboard';
 import AttendancePage from './pages/AttendancePage';
 import MarksPage from './pages/MarksPage';
 import UsersPage from './pages/UsersPage';
@@ -37,16 +38,25 @@ function App() {
                         <Route path="/login" element={<Login />} />
 
                         <Route path="/app" element={<AppLayout />}>
-                            <Route index element={<Navigate to="dashboard" replace />} />
-                            <Route path="dashboard" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><Dashboard /></ProtectedRoute>} />
+                            <Route index element={<Navigate to="student-dashboard" replace />} />
+
+                            {/* Role-Specific Dashboards */}
+                            <Route path="student-dashboard" element={<ProtectedRoute allowedRoles={['Student']}><StudentDashboard /></ProtectedRoute>} />
+                            <Route path="faculty-dashboard" element={<ProtectedRoute allowedRoles={['Faculty']}><FacultyDashboard /></ProtectedRoute>} />
+                            <Route path="admin-dashboard" element={<ProtectedRoute allowedRoles={['Admin', 'Super Admin']}><AdminDashboard /></ProtectedRoute>} />
+
+                            {/* Shared Academic & Campus Modules */}
                             <Route path="attendance" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><AttendancePage /></ProtectedRoute>} />
                             <Route path="marks" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><MarksPage /></ProtectedRoute>} />
                             <Route path="notice-board" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><NoticeBoardPage /></ProtectedRoute>} />
                             <Route path="academic-hub" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><AcademicHubPage /></ProtectedRoute>} />
                             <Route path="skills" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><SkillExchangePage /></ProtectedRoute>} />
                             <Route path="lost-found" element={<ProtectedRoute allowedRoles={['Student', 'Faculty', 'Admin']}><LostFoundPage /></ProtectedRoute>} />
+
+                            {/* Administration Modules */}
                             <Route path="users" element={<ProtectedRoute allowedRoles={['Admin']}><UsersPage /></ProtectedRoute>} />
-                            <Route path="admin" element={<ProtectedRoute allowedRoles={['Admin']}><AdminDashboard /></ProtectedRoute>} />
+                            <Route path="settings" element={<ProtectedRoute allowedRoles={['Admin']}><AdminDashboard /></ProtectedRoute>} />
+                            <Route path="beta-feedback" element={<ProtectedRoute allowedRoles={['Admin']}><BetaFeedbackPage /></ProtectedRoute>} />
                             <Route path="beta-feedback" element={<ProtectedRoute allowedRoles={['Admin']}><BetaFeedbackPage /></ProtectedRoute>} />
                         </Route>
 

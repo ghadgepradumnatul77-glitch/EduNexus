@@ -11,7 +11,6 @@ import {
 import { BRAND_CONFIG } from '../config/brand';
 
 const Login = () => {
-    const [role, setRole] = useState('Student');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -29,11 +28,10 @@ const Login = () => {
             const result = await login(email, password);
             if (result.success) {
                 const userRole = result.data.user.role?.toLowerCase() || '';
-                if (userRole === 'student') navigate('/dashboard');
-                else if (userRole === 'faculty') navigate('/attendance');
-                else if (userRole === 'super admin' || userRole === 'super_admin') navigate('/admin');
-                else if (userRole === 'admin') navigate('/users');
-                else navigate('/dashboard');
+                if (userRole === 'student') navigate('/app/student-dashboard');
+                else if (userRole === 'faculty') navigate('/app/faculty-dashboard');
+                else if (userRole === 'super admin' || userRole === 'super_admin' || userRole === 'admin') navigate('/app/admin-dashboard');
+                else navigate('/app/student-dashboard');
             } else {
                 setError(result.message);
             }
@@ -44,10 +42,7 @@ const Login = () => {
         }
     };
 
-    const roles = [
-        { id: 'Student', icon: GraduationCap },
-        { id: 'Faculty', icon: UserCheck }
-    ];
+
 
     return (
         <div className="min-h-screen flex bg-surface-main font-sans overflow-hidden selection:bg-primary-500/20 selection:text-primary-500">

@@ -1,178 +1,170 @@
-
-
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { motion } from 'framer-motion';
+import {
+    Users,
+    GraduationCap,
+    BookOpen,
+    Clock,
+    Megaphone,
+    UserPlus,
+    FilePlus,
+    PlusCircle,
+    CheckCircle2
+} from 'lucide-react';
 import Layout from '../components/Layout';
-import api from '../utils/api';
-
-const KpiCard = ({ label, value, icon, color }) => (
-    <div className={`bg-gradient-to-br ${color} rounded-xl p-5 text-white shadow-sm`}>
-        <div className="flex justify-between items-start">
-            <div>
-                <p className="text-sm font-medium opacity-80">{label}</p>
-                <p className="text-3xl font-bold mt-1">{value ?? '--'}</p>
-            </div>
-            <span className="text-3xl opacity-70">{icon}</span>
-        </div>
-    </div>
-);
-
-const StatusChip = ({ status }) => {
-    const colors = {
-        active: 'bg-green-100 text-green-700',
-        churned: 'bg-red-100 text-red-600',
-        converted: 'bg-blue-100 text-blue-700',
-        paused: 'bg-yellow-100 text-yellow-700',
-    };
-    return (
-        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-600'}`}>
-            {status}
-        </span>
-    );
-};
+import MetricCard from '../components/ui/MetricCard';
+import ActionTile from '../components/ui/ActionTile';
 
 const AdminDashboard = () => {
-    const [betaPrograms, setBetaPrograms] = useState([]);
-    const [platformStats, setPlatformStats] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+    const [loading] = useState(false);
 
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const [betaRes, statsRes] = await Promise.allSettled([
-                    api.get('/beta/programs'),
-                    api.get('/saas/dashboard')
-                ]);
-                if (betaRes.status === 'fulfilled') {
-                    setBetaPrograms(betaRes.value.data.data || []);
-                }
-                if (statsRes.status === 'fulfilled') {
-                    setPlatformStats(statsRes.value.data.data || null);
-                }
-            } catch {/* ignore */ } finally {
-                setLoading(false);
-            }
-        };
-        load();
-    }, []);
+    // Placeholder data to fulfill User UI requirements
+    // In a real application, these would be fetched via API
+    const metrics = {
+        totalStudents: '4,250',
+        totalFaculty: '312',
+        activeCourses: '145',
+        pendingApprovals: '28'
+    };
 
-    const activeBeta = betaPrograms.filter(b => b.status === 'active').length;
-    const avgNps = betaPrograms.length
-        ? (betaPrograms.reduce((s, b) => s + (Number(b.avg_nps) || 0), 0) / betaPrograms.length).toFixed(1)
-        : '--';
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.08 }
+        }
+    };
 
     return (
         <Layout>
-            <div className="space-y-6">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Super Admin — Platform Dashboard</h1>
-                    <p className="text-gray-500 text-sm mt-1">Real-time platform health, revenue, and beta cohort overview</p>
-                </div>
-
-                {/* KPI Row */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <KpiCard label="Total Tenants" value={platformStats?.total_tenants ?? betaPrograms.length} icon="🏫" color="from-teal-500 to-teal-600" />
-                    <KpiCard label="Beta Active" value={activeBeta} icon="🧪" color="from-teal-500 to-teal-600" />
-                    <KpiCard label="Avg Beta NPS" value={avgNps} icon="⭐" color="from-slate-700 to-slate-800" />
-                    <KpiCard label="Platform Status" value="Healthy" icon="💚" color="from-green-500 to-green-600" />
-                </div>
-
-                {/* Beta Cohort Table */}
-                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <div className="px-5 py-4 border-b border-gray-100">
-                        <h2 className="text-base font-semibold text-gray-800">Beta Cohort 2026-Q1</h2>
-                        <p className="text-xs text-gray-400 mt-0.5">{betaPrograms.length} institutions enrolled</p>
-                    </div>
-                    {loading ? (
-                        <div className="text-center py-12 text-gray-400">Loading…</div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="text-xs text-gray-500 uppercase tracking-wider border-b border-gray-100 bg-gray-50">
-                                        <th className="px-4 py-3 text-left">Institution</th>
-                                        <th className="px-4 py-3 text-left">Plan</th>
-                                        <th className="px-4 py-3 text-left">Users</th>
-                                        <th className="px-4 py-3 text-left">NPS</th>
-                                        <th className="px-4 py-3 text-left">Feedback Rounds</th>
-                                        <th className="px-4 py-3 text-left">Status</th>
-                                        <th className="px-4 py-3 text-left">Contact</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {betaPrograms.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={7} className="text-center py-12 text-gray-400">
-                                                No beta programs yet. Run{' '}
-                                                <code className="bg-gray-100 px-1 rounded text-xs">node scripts/seed-beta-institutions.js</code>{' '}
-                                                to seed the first cohort.
-                                            </td>
-                                        </tr>
-                                    ) : betaPrograms.map(bp => (
-                                        <tr key={bp.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-4 py-3">
-                                                <p className="font-medium text-gray-800">{bp.org_name}</p>
-                                                <p className="text-xs text-gray-400">{bp.org_slug}.edu</p>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span className="px-2 py-0.5 bg-teal-50 text-teal-700 text-xs rounded-full font-medium">
-                                                    {bp.subscription_plan || 'beta'}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3 font-medium text-gray-700">{bp.user_count ?? '--'}</td>
-                                            <td className="px-4 py-3">
-                                                {bp.avg_nps != null ? (
-                                                    <span className={`font-bold ${Number(bp.avg_nps) >= 8 ? 'text-green-600' : Number(bp.avg_nps) >= 6 ? 'text-yellow-600' : 'text-red-500'}`}>
-                                                        {bp.avg_nps}/10
-                                                    </span>
-                                                ) : <span className="text-gray-400 text-xs">No data</span>}
-                                            </td>
-                                            <td className="px-4 py-3 text-gray-600">{bp.feedback_count ?? 0}</td>
-                                            <td className="px-4 py-3"><StatusChip status={bp.status} /></td>
-                                            <td className="px-4 py-3 text-xs text-gray-500">{bp.contact_name || '--'}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="space-y-12 pb-20"
+            >
+                {/* 1. HERO SECTION */}
+                <div className="relative overflow-hidden group bg-surface-card/40 rounded-[2.5rem] p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-8 border border-edu-border shadow-sm">
+                    <div className="space-y-4">
+                        <div
+                            className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-600"
+                            role="status"
+                        >
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                            </span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">University Administration</span>
                         </div>
-                    )}
+                        <div>
+                            <h1 className="text-4xl md:text-5xl font-black text-text-primary tracking-tight leading-[1.1]">
+                                Welcome back, <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-primary-400 to-accent-indigo">{user?.firstName || 'Admin'}</span>
+                            </h1>
+                            <p className="text-text-secondary font-medium mt-4 max-w-lg leading-relaxed">
+                                System operational. You have <span className="text-primary-600 font-bold">{metrics.pendingApprovals}</span> pending faculty approvals and system alerts requiring your attention.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Platform Info */}
-                {platformStats && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="bg-white rounded-xl shadow-sm p-5">
-                            <h3 className="font-semibold text-gray-700 mb-3">System Health</h3>
-                            <div className="space-y-2 text-sm">
-                                {Object.entries({
-                                    'DB Connections': platformStats.db_connections ?? 'OK',
-                                    'Redis Status': platformStats.redis_status ?? 'OK',
-                                    'API Uptime': '99.9%',
-                                }).map(([k, v]) => (
-                                    <div key={k} className="flex justify-between">
-                                        <span className="text-gray-500">{k}</span>
-                                        <span className="font-medium text-gray-800">{v}</span>
+                {/* 2. METRIC CARDS */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <MetricCard
+                        title="Total Students"
+                        value={metrics.totalStudents}
+                        icon={Users}
+                        trendValue="+5.2%"
+                        data={[4000, 4050, 4100, 4150, 4200, 4250]}
+                        color="#14b8a6"
+                        loading={loading}
+                        delay={0.1}
+                    />
+                    <MetricCard
+                        title="Total Faculty"
+                        value={metrics.totalFaculty}
+                        icon={GraduationCap}
+                        trendValue="+2"
+                        data={[300, 305, 308, 309, 310, 312]}
+                        color="#6366f1"
+                        loading={loading}
+                        delay={0.2}
+                    />
+                    <MetricCard
+                        title="Active Courses"
+                        value={metrics.activeCourses}
+                        icon={BookOpen}
+                        trendValue="+12"
+                        data={[120, 125, 130, 135, 140, 145]}
+                        color="#8b5cf6"
+                        loading={loading}
+                        delay={0.3}
+                    />
+                    <MetricCard
+                        title="Pending Approvals"
+                        value={metrics.pendingApprovals}
+                        icon={Clock}
+                        trendValue="Needs Action"
+                        data={[10, 15, 20, 25, 30, 28]}
+                        color="#f59e0b"
+                        loading={loading}
+                        delay={0.4}
+                    />
+                </div>
+
+                {/* 3. MANAGEMENT SHORTCUTS & NOTICES */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Primary Actions */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <div className="bg-surface-card/60 rounded-[2.5rem] border border-edu-border p-8 backdrop-blur-xl">
+                            <h3 className="text-xl font-black text-text-primary tracking-tight mb-8">Management Shortcuts</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4" role="group" aria-label="Management Quick Actions">
+                                <ActionTile icon={UserPlus} label="Add Student" color="bg-accent-indigo/10" textColor="text-accent-indigo" delay={0.5} />
+                                <ActionTile icon={Megaphone} label="Create Notice" color="bg-primary-500/10" textColor="text-primary-500" delay={0.6} />
+                                <ActionTile icon={BookOpen} label="Create Course" color="bg-accent-violet/10" textColor="text-accent-violet" delay={0.7} />
+                                <ActionTile icon={GraduationCap} label="Add Faculty" color="bg-emerald-500/10" textColor="text-emerald-500" delay={0.8} />
+                                <ActionTile icon={FilePlus} label="Manage Terms" color="bg-amber-500/10" textColor="text-amber-500" delay={0.9} />
+                                <ActionTile icon={PlusCircle} label="System Config" color="bg-slate-500/10" textColor="text-slate-500" delay={1.0} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Recent Notices */}
+                    <div className="bg-surface-card/60 rounded-[2.5rem] border border-edu-border p-8 backdrop-blur-xl flex flex-col h-full">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-xl font-black text-text-primary tracking-tight">Recent Notices</h3>
+                            <button className="text-[10px] font-black uppercase tracking-widest text-primary-500 hover:text-primary-600 transition-colors">View All</button>
+                        </div>
+
+                        <div className="flex-1 space-y-6" role="list">
+                            {[
+                                { title: 'Mid-term Exams Scheduled', time: '2 hours ago', type: 'urgent' },
+                                { title: 'Campus Maintenance', time: '5 hours ago', type: 'info' },
+                                { title: 'New Faculty Onboarding', time: '1 day ago', type: 'success' },
+                            ].map((notice, idx) => (
+                                <div key={idx} className="flex items-start space-x-4 relative group" role="listitem">
+                                    <div
+                                        className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm
+                                            ${notice.type === 'urgent' ? 'bg-red-500/10 text-red-500' :
+                                                notice.type === 'success' ? 'bg-green-500/10 text-green-500' :
+                                                    'bg-blue-500/10 text-blue-500'}`}
+                                    >
+                                        <Megaphone className="w-5 h-5" />
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="bg-white rounded-xl shadow-sm p-5">
-                            <h3 className="font-semibold text-gray-700 mb-3">Quick Links</h3>
-                            <div className="space-y-2 text-sm">
-                                {[
-                                    { label: 'Health Check', url: 'http://localhost:5000/health' },
-                                    { label: 'Readiness', url: 'http://localhost:5000/health/ready' },
-                                ].map(l => (
-                                    <a key={l.label} href={l.url} target="_blank" rel="noreferrer"
-                                        className="flex justify-between text-teal-600 hover:text-teal-700 transition-colors">
-                                        <span>{l.label}</span>
-                                        <span>↗</span>
-                                    </a>
-                                ))}
-                            </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-0.5">
+                                            <h4 className="text-sm font-bold text-text-primary tracking-tight truncate">{notice.title}</h4>
+                                        </div>
+                                        <p className="text-xs font-medium text-text-muted">{notice.time}</p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            </motion.div>
         </Layout>
     );
 };

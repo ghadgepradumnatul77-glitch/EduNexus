@@ -45,23 +45,27 @@
 
 @layer components {
   .glass {
-    @apply bg-surface-glass/70 backdrop-blur-md border border-edu-border shadow-glass;
+    @apply bg-surface-glass/60 backdrop-blur-xl border border-white/20 shadow-glass transition-all duration-300;
   }
 
   .glass-dark {
-    @apply bg-slate-900/40 backdrop-blur-md border border-slate-700/30 shadow-2xl;
+    @apply bg-slate-900/40 backdrop-blur-xl border border-slate-700/30 shadow-2xl transition-all duration-300;
+  }
+
+  .glass-hero {
+    @apply bg-surface-card/40 backdrop-blur-2xl border border-white/30 shadow-2xl rounded-[2.5rem] transition-all duration-500 hover:shadow-primary-500/10;
   }
 
   .btn-premium {
-    @apply relative overflow-hidden bg-text-primary text-surface-main font-semibold py-3 px-8 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-primary-500/10 hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+    @apply relative overflow-hidden bg-text-primary text-surface-main font-bold tracking-wide py-3 px-8 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .btn-premium-accent {
-    @apply relative overflow-hidden bg-primary-600 text-white font-semibold py-3 px-8 rounded-2xl shadow-lg shadow-primary-500/10 transition-all duration-300 hover:shadow-primary-500/20 hover:-translate-y-0.5 active:scale-[0.98] active:translate-y-0;
+    @apply relative overflow-hidden bg-gradient-to-r from-primary-600 to-primary-500 text-white font-bold tracking-wide py-3 px-8 rounded-2xl shadow-lg shadow-primary-500/20 transition-all duration-200 hover:shadow-xl hover:shadow-primary-500/30 hover:-translate-y-1 active:scale-95;
   }
 
   .card-premium {
-    @apply bg-surface-card/80 backdrop-blur-xl rounded-[2rem] border border-edu-border shadow-premium p-8 transition-all duration-500 hover:shadow-2xl hover:bg-surface-card;
+    @apply bg-surface-card/90 backdrop-blur-xl rounded-[2rem] border border-edu-border shadow-sm p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary-500/20;
   }
 
   .sidebar-item {
